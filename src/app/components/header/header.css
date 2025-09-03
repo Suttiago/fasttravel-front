@@ -1,0 +1,19 @@
+/* header.component.css */
+
+.btn-primary {
+  background-color: #6e0823;
+  border-color: #6e0823; /* Garante que a borda tenha a mesma cor */
+  color: white; /* Garante que o texto seja branco */
+}
+
+.btn-primary:hover {
+  background-color: #810826;
+  border-color: #810826;
+}
+
+/* header.component.css */
+
+.navbar {
+  min-height: 80px; /* Altere este valor para a altura que você deseja */
+}
+

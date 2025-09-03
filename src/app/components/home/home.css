@@ -1,0 +1,11 @@
+
+.home-container {
+  background-color: #2c2f33; /* A cor cinza para o conteúdo da home */
+  min-height: calc(100vh - 80px); /* Garante que o fundo cubra a tela */
+  padding-top: 100px; /* Cria o espaço abaixo do header */
+  margin-top: 80px;
+}
+
+h1,p{
+  color: white;
+}

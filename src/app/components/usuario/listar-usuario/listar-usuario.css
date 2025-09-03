@@ -1,0 +1,7 @@
+/* No styles.css ou no body do seu HTML */
+body {
+    background-color: #212121; /* Um cinza bem escuro */
+    color: #f0f0f0; /* Cor do texto claro */
+    margin-top: 180px;
+    min-height: calc(100vh - 80px); /* Garante que o fundo cubra a tela */
+}
