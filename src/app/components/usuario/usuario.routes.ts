@@ -8,5 +8,10 @@ export const CLIENTES_ROUTES: Routes = [
       import('./listar-usuario/listar-usuario').then(m => m.ListarUsuario)
   },
 
+  {
+    path:'cadastro',
+    loadComponent:() =>
+      import('./cadastro-usuario/cadastro-usuario').then(m=>m.CadastroUsuario)
+  }
   
 ];

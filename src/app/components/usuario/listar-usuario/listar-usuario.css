@@ -1,7 +1,84 @@
-/* No styles.css ou no body do seu HTML */
-body {
-    background-color: #212121; /* Um cinza bem escuro */
-    color: #f0f0f0; /* Cor do texto claro */
-    margin-top: 180px;
-    min-height: calc(100vh - 80px); /* Garante que o fundo cubra a tela */
+/* Container principal da tabela */
+.table-container {
+    padding: 2rem;
+    background-color: #212121; /* Cor de fundo principal */
+    min-height: 100vh;
+}
+
+/* Estilização do cabeçalho da tabela (título e botão) */
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1.5rem;
+    margin-top: 90px;
+}
+
+.table-header h1 {
+    color: #f0f0f0;
+    font-size: 2rem;
+    margin: 0;
+}
+
+/* Estilo do botão de adicionar - cor verde */
+.p-button-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+/* Estilização do card que envolve a tabela */
+.p-card {
+    background-color: #2b2b2b; /* Fundo mais claro para a tabela */
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+/* Estilo da tabela PrimeNG */
+.p-datatable {
+    border: none;
+    color: #f0f0f0;
+}
+
+/* Cabeçalho da tabela */
+.p-datatable-gridlines .p-datatable-thead > tr > th {
+    background-color: #3a3a3a;
+    color: #f0f0f0;
+    font-weight: bold;
+    border-color: #444;
+}
+
+/* Corpo da tabela */
+.p-datatable .p-datatable-tbody > tr {
+    background-color: #2b2b2b;
+}
+/* Linhas zebradas - stripedRows */
+.p-datatable.p-datatable-striped .p-datatable-tbody > tr:nth-child(even) {
+    background-color: #333333;
+}
+
+/* Células da tabela */
+.p-datatable-gridlines .p-datatable-tbody > tr > td {
+    border-color: #444;
+}
+
+/* Estilos dos botões de ação */
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.p-button-danger { /* Botão de exclusão (vermelho) */
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.p-button-info { /* Botão de edição (azul) */
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+}
+
+/* Tamanho pequeno para os botões */
+.p-button-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
 }

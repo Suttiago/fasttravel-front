@@ -1,26 +1,41 @@
-<body>
+<div class="table-container">
+    <div class="table-header">
+        <h1>Meus Usuários</h1>
+        <button pButton icon="pi pi-plus" label="Adicionar Usuário" class="p-button-success"></button>
+    </div>
+    
+    <div class="p-card">
+        <p-table [value]="usuarios" [tableStyle]="{'min-width': '50rem'}" styleClass="p-datatable-gridlines p-datatable-striped">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>CPF</th>
+                    <th>Sexo</th>
+                    <th>Profissão</th>
+                    <th>Renda</th>
+                    <th>Ações</th>
+                </tr>
+            </ng-template>
 
-    <p-table [value]="usuarios" [tableStyle]="{'min-width': '100rem'}">
-        <ng-template #header>
-            <tr>
-                <th>Code</th>
-                <th>Name</th>
-                <th>Category</th>
-                <th>Quantity</th>
-                <th>operacoes</th>
-            </tr>
-        </ng-template>
-        <ng-template #body let-usuarios>
-            <tr>
-
-            </tr>
-        </ng-template>
-</p-table>
-
-<p>a</p>
-<p>a</p>
-<p>a</p>
-<p>a</p>
-<p>a</p>
-
-</body>
+            <ng-template pTemplate="body" let-usuarios>
+                <tr>
+                    <td>{{ usuarios.id }}</td>
+                    <td>{{ usuarios.nome }}</td>
+                    <td>{{ usuarios.email }}</td>
+                    <td>{{ usuarios.cpf }}</td>
+                    <td>{{ usuarios.sexo }}</td>
+                    <td>{{ usuarios.profissao }}</td>
+                    <td>{{ usuarios.renda }}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button pButton icon="pi pi-trash" class="p-button-danger p-button-sm"></button>
+                            <button pButton icon="pi pi-pencil" class="p-button-info p-button-sm"></button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>

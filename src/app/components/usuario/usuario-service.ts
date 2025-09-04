@@ -10,6 +10,10 @@ export class UsuarioService {
   constructor(private httpCliente: HttpClient){}
 
   listarUsuarios(){
-    return this.httpCliente.get<any[]>(`this.urlCliente/Listar`);
+    return this.httpCliente.get<any[]>(`${this.urlUsuario}/Listar`);
+  }
+
+  CadastroUsuario(){
+    return this.httpCliente.get<any[]>(`${this.urlUsuario}/CadastroUsuario`);
   }
 }
