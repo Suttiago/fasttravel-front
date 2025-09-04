@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class UsuarioService {
     return this.httpCliente.get<any[]>(`${this.urlUsuario}/Listar`);
   }
 
-  CadastroUsuario(){
-    return this.httpCliente.get<any[]>(`${this.urlUsuario}/CadastroUsuario`);
+  CadastroUsuario(usuario: any,): Observable<any>{
+    return this.httpCliente.post<any[]>(`${this.urlUsuario}/CadastroUsuario`,usuario);
   }
 }
