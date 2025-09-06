@@ -12,6 +12,12 @@ export const CLIENTES_ROUTES: Routes = [
     path:'cadastro',
     loadComponent:() =>
       import('./cadastro-usuario/cadastro-usuario').then(m=>m.CadastroUsuario)
+  },
+
+  {
+    path:'login',
+    loadComponent:()=>
+      import('./login/login').then(m=>m.Login)
   }
   
 ];
