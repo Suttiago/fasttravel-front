@@ -18,7 +18,7 @@ export class UsuarioService {
     return this.httpCliente.post<any[]>(`${this.urlUsuario}/CadastroUsuario`,usuario);
   }
 
-  LoginUsuario(email:any, senha:any): Observable<any>{
-    return this.httpCliente.post<any[]>(`${this.urlUsuario}/Login`,email,senha);
+  LoginUsuario(dadosLogin: any): Observable<any>{
+    return this.httpCliente.post<any[]>(`${this.urlUsuario}/Login`,dadosLogin);
   }
 }
