@@ -1,0 +1,41 @@
+    
+    <form #formCadastro="ngForm" (ngSubmit)="onSubmit()">
+        <div class="row g-3">
+            <div class="col-12 md:col-6">
+                <label for="nome" class="form-label">Nome</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                    <input type="text" class="form-control" id="nome" name="nome" placeholder="Nome completo" [(ngModel)]="nome" required>
+                </div>
+            </div>
+            
+
+            <div class="col-12 md:col-6">
+                <label for="cpf" class="form-label">CPF</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-credit-card"></i></span>
+                    <input type="text" class="form-control" id="cpf" name="cpf" placeholder="000.000.000-00" [(ngModel)]="cpf" mask="000.000.000-00" required>
+                </div>
+            </div>
+
+            <div class="col-12 md:col-6">
+                <label for="dataNascimento" class="form-label">Data de Nascimento</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+                    <input type="date" class="form-control" id="dataNascimento" name="data_nascimento" [(ngModel)]="data_nascimento" required>
+                </div>
+            </div>
+
+            <div class="col-12 md:col-6">
+            <label for="sexo" class="form-label">Sexo</label>
+            <select class="form-select" id="sexo" name="sexo" [(ngModel)]="sexo" required>
+                <option [ngValue]="null">Selecione...</option>
+                <option *ngFor="let op of opcoesSexo" [ngValue]="op.value">{{ op.label }}</option>
+            </select>
+            </div>
+        </div>
+
+        <div class="d-grid mt-4">
+            <button type="submit" class="btn btn-primary" [disabled]="!formCadastro.valid">Cadastrar Dependente</button>
+        </div>
+    </form>

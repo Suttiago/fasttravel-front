@@ -14,18 +14,15 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideRouter(routes),
     provideHttpClient(
-      withInterceptors([
-        authInterceptor
-      ])
+      withInterceptors([authInterceptor]) // ✅ aplica o interceptor
     ),
     provideClientHydration(withEventReplay()),
     provideAnimations(),
-    provideHttpClient(),
     providePrimeNG({
-      theme:{
+      theme: {
         preset: Lara,
-        options:{
-          darkModeSelector:'none'
+        options: {
+          darkModeSelector: 'none'
         }
       }
     })

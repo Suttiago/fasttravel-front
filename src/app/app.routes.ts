@@ -9,6 +9,13 @@ export const routes: Routes = [
     {
         path:'usuarios',
         loadChildren:()=>
-            import('./components/usuario/usuario.routes').then(m=>m.CLIENTES_ROUTES)
+            import('./components/usuario/usuario.routes').then(m=>m.USUARIO_ROUTES)
+    },
+
+    {
+        path:'dependentes',
+        loadChildren:()=>
+            import('./components/dependentes/dependentes.routes').then(m=>m.DEPENDENTES_ROUTES)
+
     }
 ];

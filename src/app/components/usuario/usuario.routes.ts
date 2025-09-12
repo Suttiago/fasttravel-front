@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 
-export const CLIENTES_ROUTES: Routes = [
+export const USUARIO_ROUTES: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'listar' },
   {
     path: 'listar',

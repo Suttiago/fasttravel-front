@@ -1,0 +1,81 @@
+<div class="page-container">
+    <div id="container-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="card-title mb-0 ">Meus Dependentes</span>
+
+            <button type="button" class="btn btn-success btn-lg" (click)="abrirModal()">
+                Adicionar Dependente
+            </button>
+        </div>
+
+        <div class="card p-4">
+            <div class="mt-2" >
+                <div class="table-responsive"><table class="table table-dark table-striped table-hover" style="max-height: 100px; min-height: 100px;">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Nome</th>
+                            <th scope="col">CPF</th>
+                            <th scope="col">Sexo</th>
+                            <th scope="col">Data de Nascimento</th>
+                            <th scope="col">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody >
+                        <tr *ngFor="let dependente of dependentes; let i = index">
+                            <th scope="row">{{ i + 1 }}</th>
+                            <td>{{ dependente.nome }}</td>
+                            <td>{{ dependente.cpf }}</td>
+                            <td>{{ dependente.sexo }}</td>
+                            <td>{{ dependente.data_nascimento }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-info me-2"
+                                (click)="editarDependente(dependente)">Editar</button>
+                                <button class="btn btn-sm btn-danger"
+                                (click)="excluirDependente(dependente.id)">Excluir</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+            </div>
+
+            
+<!-- Modal para criação de usuário-->
+<div *ngIf="modalAberto" class="modal fade show" tabindex="-1" role="dialog" style="display: block;" aria-labelledby="exampleModalLabel" aria-modal="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header border-bottom border-secondary">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Cadastro Dependente</h1>
+                <button type="button" class="btn-close btn-close-white" (click)="fecharModal()" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <app-cadastro-dependentes></app-cadastro-dependentes>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="modalAberto" class="modal-backdrop fade show"></div>
+
+<!-- modal.component.html -->
+
+<div *ngIf="modalEditarAberto" class="modal fade show" tabindex="-1" role="dialog" style="display: block;" aria-labelledby="editModalLabel" aria-modal="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header border-bottom border-secondary">
+                <h1 class="modal-title fs-5" id="editModalLabel">Editar Dependente</h1>
+                <button type="button" class="btn-close btn-close-white" (click)="fecharModalEdicao()" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <app-cadastro-dependentes 
+                    [dependenteEdicao]="dependenteSelecionado"
+                    (fecharModal)="fecharModalEdicao()">
+                </app-cadastro-dependentes>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</div>

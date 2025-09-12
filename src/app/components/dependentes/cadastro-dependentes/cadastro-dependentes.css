@@ -1,0 +1,28 @@
+.form-label {
+    color: #f0f0f0;
+}
+
+.form-control:focus {
+    background-color: #f0f0f0;
+    border-color: #6e0823;
+    box-shadow: 0 0 0 0.25rem rgba(110, 8, 35, 0.25);
+    color: #000000;
+}
+
+.input-group-text {
+    background-color: #3a3a3a;
+    border-color: #444;
+    color: #f0f0f0;
+}
+
+.btn-primary {
+    background-color: #6e0823;
+    border-color: #6e0823;
+    color: white;
+    font-weight: bold;
+}
+
+.btn-primary:hover {
+    background-color: #810826;
+    border-color: #810826;
+}

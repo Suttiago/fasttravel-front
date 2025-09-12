@@ -1,23 +1,16 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 
-import { Dependentes } from './dependentes';
+import { DependentesService } from './dependentes-service';
 
 describe('Dependentes', () => {
-  let component: Dependentes;
-  let fixture: ComponentFixture<Dependentes>;
+  let service: DependentesService;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [Dependentes]
-    })
-    .compileComponents();
-
-    fixture = TestBed.createComponent(Dependentes);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(DependentesService);
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('should be created', () => {
+    expect(service).toBeTruthy();
   });
 });
