@@ -29,10 +29,14 @@
                             <td>{{ dependente.sexo }}</td>
                             <td>{{ dependente.data_nascimento }}</td>
                             <td>
+
                                 <button class="btn btn-sm btn-info me-2"
-                                (click)="editarDependente(dependente)">Editar</button>
-                                <button class="btn btn-sm btn-danger"
-                                (click)="excluirDependente(dependente.id)">Excluir</button>
+                                    (click)="abrirModalEdicao(dependente)"><i class="fa-solid fa-pencil"></i>
+                                </button>
+                                
+                                <button class="btn btn-sm btn-danger"(click)="excluirDependente(dependente.id)">
+                                    <i class="fa-solid fa-trash"></i> 
+                                </button>
                             </td>
                         </tr>
                     </tbody>

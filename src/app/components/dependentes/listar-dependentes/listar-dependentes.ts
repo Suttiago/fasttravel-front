@@ -36,7 +36,6 @@ export class ListarDependentes implements OnInit {
   abrirModal(): void {
     this.modalAberto = true;
   }
-
   
   fecharModal(): void {
     this.modalAberto = false;
@@ -82,7 +81,7 @@ export class ListarDependentes implements OnInit {
     if (confirm('Deseja mesmo excluir esse dependente?')) {
       this.dependenteService.ExcluirDependentes(id).subscribe({
         next: () => {
-          this.carregarDependentes; 
+          this.carregarDependentes(); 
           alert('Dependente excluído com sucesso!');
         },
         error: (erro) => {
