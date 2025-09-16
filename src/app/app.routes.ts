@@ -17,5 +17,11 @@ export const routes: Routes = [
         loadChildren:()=>
             import('./components/dependentes/dependentes.routes').then(m=>m.DEPENDENTES_ROUTES)
 
+    },
+    {
+        path:'destinos',
+        loadChildren:()=>
+            import('./components/destinos/destinos.routes').then(m=>m.DESTINO_ROUTES)
+
     }
 ];
