@@ -20,7 +20,7 @@ export class CadastroDestino {
 
   id!: string;
   destino!: string;
-  check_in!: Date;
+  check_in!: string;
   check_out!: string;
   adultos!: Int16Array;
   criancas!: Int16Array;
@@ -71,7 +71,7 @@ export class CadastroDestino {
           console.log('Cadastro realizado com sucesso!', response);
           alert('Cadastro realizado com sucesso!');
           this.fecharModal.emit();
-          this.router.navigate(['/dependentes/listar']);
+          this.router.navigate(['/destinos/listar']);
         },
         error: (error) => {
           console.error('Erro ao cadastrar', error);

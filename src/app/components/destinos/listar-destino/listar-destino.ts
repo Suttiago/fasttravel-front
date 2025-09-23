@@ -9,6 +9,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { DependentesService } from '../../dependentes/dependentes-service';
 import { CadastroDestino } from '../cadastro-destino/cadastro-destino';
 import { DestinosService } from '../destinos-service';
+import { Hoteis } from '../hoteis/hoteis';
 
 @Component({
   selector: 'app-listar-destino',
@@ -18,7 +19,8 @@ import { DestinosService } from '../destinos-service';
     CadastroDestino,
     FormsModule,
     DialogModule,
-    InputTextModule],
+    InputTextModule,
+    Hoteis],
   templateUrl: './listar-destino.html',
   styleUrl: './listar-destino.css'
 })
@@ -29,6 +31,10 @@ export class ListarDestino {
 
   destinoSelecionado: any = null;
   modalEditarAberto = false;
+  modalHoteisAberto = false;
+
+  hoteis:any[] = []
+  carregando = false
 
   abrirModal(): void {
     this.modalAberto = true;
@@ -50,6 +56,19 @@ export class ListarDestino {
     this.carregarDestinos();
   }
 
+  abrirModalHoteis(destino: any): void {
+    this.carregando = true;
+    this.destinoSelecionado = destino;
+    this.modalHoteisAberto = true;
+    
+    // Chamada ao método de busca
+    this.buscarHoteis(destino.id);
+  }
+
+  fecharModalHoteis(): void {
+    this.modalHoteisAberto = false;
+  }
+
 
   constructor(
     private readonly destinoteService: DestinosService,
@@ -62,13 +81,13 @@ export class ListarDestino {
 
   carregarDestinos(): void {
     this.destinoteService.listarDestinos().subscribe({
-      next: (listarDependentes: any[]) => {
-        this.destinos = listarDependentes;
+      next: (listarDestinos: any[]) => {
+        this.destinos = listarDestinos;
         console.log(this.destinos);
         this.detectorMudanca.detectChanges();
       },
       error: error => {
-        console.log('erro ao buscar dependentes');
+        console.log('erro ao buscar destinos');
         console.log(error);
       }
     });
@@ -79,11 +98,11 @@ export class ListarDestino {
       this.destinoteService.ExcluirDestinos(id).subscribe({
         next: () => {
           this.carregarDestinos(); 
-          alert('Dependente excluído com sucesso!');
+          alert('Destino excluído com sucesso!');
         },
         error: (erro) => {
-          console.error('Erro ao excluir dependente:', erro);
-          alert('Erro ao excluir dependente.');
+          console.error('Erro ao excluir destino:', erro);
+          alert('Erro ao excluir destino.');
         }
       });
     }
@@ -92,14 +111,42 @@ export class ListarDestino {
   editarDestinos(destino: any): void{
     this.destinoteService.EditarDestinos(destino).subscribe({
       next:(res)=>{
-      alert('Dependente atualizado com sucesso!');
+      alert('Destino atualizado com sucesso!');
       this.modalEditarAberto = false;
       this.carregarDestinos();       
     },
     error:(err)=>{
-      console.error('Erro ao editar dependente:', err);
-      alert('Erro ao editar dependente.');
+      console.error('Erro ao editar destino:', err);
+      alert('Erro ao editar destino.');
     }
     })
+  }
+
+buscarHoteis(id: any): void {
+    this.destinoteService.BuscarHoteis(id).subscribe({
+      next: (res: any) => {
+        console.log('Resposta completa da API:', res);
+
+        this.hoteis = res.ads.map((hotel: any) => {
+          return {
+            name: hotel.name,
+            price: hotel.price,
+            overall_rating: hotel.overall_rating,
+            link: hotel.link || hotel.serpapi_property_details_link,
+            thumbnail: hotel.thumbnail,
+            amenities: hotel.amenities ? hotel.amenities.join(', ') : 'Não disponível'
+          };
+        });
+
+        this.carregando = false; 
+        this.detectorMudanca.detectChanges()
+      },
+      error: (err) => {
+        console.error('Erro ao buscar hotéis:', err);
+        alert('Erro ao buscar hotéis.');
+        this.carregando = false; 
+        this.detectorMudanca.detectChanges()
+      }
+    });
   }
 }

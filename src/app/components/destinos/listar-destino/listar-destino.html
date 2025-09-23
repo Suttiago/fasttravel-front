@@ -35,6 +35,11 @@
                                     <button class="btn btn-sm btn-info me-2" (click)="abrirModalEdicao(destino)">
                                         <i class="fa-solid fa-pencil"></i>
                                     </button>
+                                    
+                                    <button class="btn btn-sm btn-warning me-2" (click)="abrirModalHoteis(destino)">
+                                        <i class="fa-solid fa-hotel"></i>
+                                    </button>
+
                                     <button class="btn btn-sm btn-danger" (click)="excluirDestinos(destino.id)">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
@@ -81,7 +86,28 @@
                     </div>
                 </div>
             </div>
-            
+
+            <div *ngIf="modalHoteisAberto" class="modal fade show" tabindex="-1" role="dialog"
+                style="display: block;" aria-labelledby="hoteisModalLabel" aria-modal="true">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content bg-dark text-white">
+                        <div class="modal-header border-bottom border-secondary">
+                            <h1 class="modal-title fs-5" id="hoteisModalLabel">Hotéis para: {{ destinoSelecionado?.destino }}</h1>
+                            <button type="button" class="btn-close btn-close-white" (click)="fecharModalHoteis()"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                              <app-hoteis
+                                [hoteis]="hoteis" 
+                                [carregando]="carregando"
+                                [destino]="destinoSelecionado"
+                        ></app-hoteis>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="modalHoteisAberto" class="modal-backdrop fade show"></div>
         </div>
     </div>
 </div>

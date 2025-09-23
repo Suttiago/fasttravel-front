@@ -15,15 +15,19 @@ export class DestinosService {
   }
 
   CadastroDestinos(destino: any): Observable<any> {
-    return this.httpCliente.post<any>(`${this.urlUsuario}/CadastroDestino`, destino);
+    return this.httpCliente.post<any>(`${this.urlUsuario}/Cadastro`, destino);
   }
 
   ExcluirDestinos(id:any):Observable<void>{
-    return this.httpCliente.delete<any>(`${this.urlUsuario}/Excluirdestino/${id}`);
+    return this.httpCliente.delete<any>(`${this.urlUsuario}/Excluir/${id}`);
   }
 
   EditarDestinos(destino:any):Observable<any>{
-    return this.httpCliente.put<any>(`${this.urlUsuario}/EditarDestino/${destino.id}`,destino);
+    return this.httpCliente.put<any>(`${this.urlUsuario}/Editar/${destino.id}`,destino);
+  }
+
+  BuscarHoteis(id:any):Observable<any>{
+    return this.httpCliente.post<any>(`http://localhost:5001/BuscarHoteis/${id}`,id);
   }
   
 }
