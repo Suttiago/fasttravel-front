@@ -1,0 +1,5 @@
+.hotel-thumbnail {
+  max-width: 240px;
+  height: auto;
+  border-radius: 5px; /* Adiciona uma pequena borda para um visual mais agradável */
+}

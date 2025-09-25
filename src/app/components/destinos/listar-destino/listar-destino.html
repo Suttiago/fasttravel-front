@@ -51,7 +51,7 @@
             </div>
 
             <div *ngIf="modalAberto" class="modal fade show" tabindex="-1" role="dialog" style="display: block;"
-                aria-labelledby="exampleModalLabel" aria-modal="true">
+                aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content bg-dark text-white">
                         <div class="modal-header border-bottom border-secondary">
@@ -68,8 +68,8 @@
 
             <div *ngIf="modalAberto" class="modal-backdrop fade show"></div>
 
-            <div *ngIf="modalEditarAberto" class="modal fade show" tabindex="-1" role="dialog"
-                style="display: block;" aria-labelledby="editModalLabel" aria-modal="true">
+            <div *ngIf="modalEditarAberto" class="modal fade" tabindex="-1" role="dialog"
+                style="display: block;" aria-labelledby="editModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content bg-dark text-white">
                         <div class="modal-header border-bottom border-secondary">
