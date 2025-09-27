@@ -44,7 +44,7 @@
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </td>
-                            </tr>
+                            </tr>                            
                         </tbody>
                     </table>
                 </div>
@@ -68,7 +68,7 @@
 
             <div *ngIf="modalAberto" class="modal-backdrop fade show"></div>
 
-            <div *ngIf="modalEditarAberto" class="modal fade" tabindex="-1" role="dialog"
+            <div *ngIf="modalEditarAberto" class="modal fade show" tabindex="-1" role="dialog"
                 style="display: block;" aria-labelledby="editModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content bg-dark text-white">
@@ -101,6 +101,7 @@
                                 [hoteis]="hoteis" 
                                 [carregando]="carregando"
                                 [destino]="destinoSelecionado"
+                                (salvarHotelEvent)="salvarHoteis($event.hotel, $event.destino)"
                         ></app-hoteis>
                         </div>
                     </div>

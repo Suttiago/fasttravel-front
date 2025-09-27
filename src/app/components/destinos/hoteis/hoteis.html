@@ -27,8 +27,8 @@
             <td>{{ hotel.overall_rating }}</td>
             <td>
               <a [href]="hotel.link" target="_blank" class="btn btn-sm btn-primary">Ver Detalhes</a>
-              <button class="btn btn-sm btn-success" >
-                <i class="fa-solid fa-circle-check"></i>
+              <button class="btn btn-sm btn-success"(click)="salvarHotel(hotel)">
+                <i class="fa-solid fa-bookmark"></i> Salvar
               </button>
             </td>
           </tr>

@@ -149,4 +149,42 @@ buscarHoteis(id: any): void {
       }
     });
   }
+
+  salvarHoteis(hotel: any, destino: any):void {
+    let precoLimpo: number = 0;
+
+    // A propriedade "extracted_price" já é um número, é a melhor opção
+    if (hotel.extracted_price) {
+      precoLimpo = hotel.extracted_price;
+    } else if (hotel.price) {
+      // Se "extracted_price" não existir, usa a string "price" e limpa
+      // 1. Remove tudo que não for dígito, vírgula ou ponto
+      // 2. Troca a vírgula por ponto para usar como separador decimal
+      precoLimpo = parseFloat(hotel.price.replace(/[^\d,.]/g, '').replace(',', '.'));
+    }
+
+
+    const hotelSalvo = {
+      hotel : hotel.name,
+      hotel_classification: hotel.overall_rating,
+      hotel_description : hotel.amenities,
+      hotel_price: precoLimpo,
+      destino_id: destino.id
+
+    };
+
+    this.destinoteService.SalvarHoteis(hotelSalvo).subscribe({
+      next:(res)=>{
+        alert('Hotel salvo com sucesso');
+        console.log('Hotel salvo', res)
+      },
+      error:(err)=>{
+        console.error('Erro ao salvar hotel:', err);
+        alert('Erro ao salvar hotel.');
+
+      }
+    })
+
+
+  }
 }

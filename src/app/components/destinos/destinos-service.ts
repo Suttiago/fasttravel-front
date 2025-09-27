@@ -29,5 +29,11 @@ export class DestinosService {
   BuscarHoteis(id:any):Observable<any>{
     return this.httpCliente.post<any>(`http://localhost:5001/BuscarHoteis/${id}`,id);
   }
+
+  SalvarHoteis(hotel:any):Observable<any>{
+    return this.httpCliente.post<any>(`http://localhost:5001/SalvarHoteis`,hotel);
+  }
+  
+
   
 }
