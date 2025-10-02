@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -34,6 +34,17 @@ export class DestinosService {
     return this.httpCliente.post<any>(`http://localhost:5001/SalvarHoteis`,hotel);
   }
   
+  ListarHoteisDestino(destino_id: any): Observable<any>{
+    return this.httpCliente.get<any>(`http://localhost:5001/ListarHoteisPorDestino/${destino_id}`,)
+  }
 
+  ListarCidades(termo: string): Observable<any[]> {
+
+    if (!termo.trim()) {
+      return of([]);
+    }
+    const params = new HttpParams().set('termo', termo);
+    return this.httpCliente.get<any[]>(`http://localhost:5001/Cidades/Listar`,{params});
+  }
   
 }

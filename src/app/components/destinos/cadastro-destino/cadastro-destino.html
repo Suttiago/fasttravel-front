@@ -1,48 +1,95 @@
 <form #formCadastroDestino="ngForm" (ngSubmit)="onSubmit()">
-    <div class="row g-3">
-        <div class="col-12 md:col-6">
-            <label for="destino" class="form-label">Destino</label>
-            <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
-                <input type="text" class="form-control" id="destino" name="destino" placeholder="Cidade ou país" [(ngModel)]="destino" required>
-            </div>
-        </div>
-        
-        <div class="col-12 md:col-6">
-            <label for="checkin" class="form-label">Check-in</label>
-            <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-calendar"></i></span>
-                <input type="date" class="form-control" id="checkin" name="check_in" [(ngModel)]="check_in" required>
-            </div>
-        </div>
-
-        <div class="col-12 md:col-6">
-            <label for="checkout" class="form-label">Check-out</label>
-            <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-calendar"></i></span>
-                <input type="date" class="form-control" id="checkout" name="check_out" [(ngModel)]="check_out" required>
-            </div>
-        </div>
-
-        <div class="col-12 md:col-6">
-            <label for="adultos" class="form-label">Número de Adultos</label>
-            <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
-                <input type="number" class="form-control" id="adultos" name="adultos" placeholder="1" [(ngModel)]="adultos" required min="1">
-            </div>
-        </div>
-
-        <div class="col-12 md:col-6">
-            <label for="criancas" class="form-label">Número de Crianças</label>
-            <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-people-fill"></i></span>
-                <input type="number" class="form-control" id="criancas" name="criancas" placeholder="0" [(ngModel)]="criancas" min="0">
-            </div>
-        </div>
-
+  <div class="row g-3">
+    <div class="col-12 md:col-6">
+      <label for="destino" class="form-label">Destino</label>
+      <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+        <p-autoComplete
+          [(ngModel)]="cidadeSelecionada"
+          name="cidadeSelecionada"
+          [dropdown]="true"
+          [suggestions]="cidades"
+          optionLabel="label"
+          (completeMethod)="buscarCidades($event)"
+          (onSelect)="selecionarCidade($event)"
+          placeholder="Digite a cidade"
+          [minLength]="3"
+          class="form-control"
+        ></p-autoComplete>
+      </div>
     </div>
 
-    <div class="d-grid mt-4">
-        <button type="submit" class="btn btn-primary" [disabled]="!formCadastroDestino.valid">Salvar Destino</button>
+    <div class="col-12 md:col-6">
+      <label for="checkin" class="form-label">Check-in</label>
+      <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+        <input
+          type="date"
+          class="form-control"
+          id="checkin"
+          name="check_in"
+          [(ngModel)]="check_in"
+          required
+        />
+      </div>
     </div>
+
+    <div class="col-12 md:col-6">
+      <label for="checkout" class="form-label">Check-out</label>
+      <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+        <input
+          type="date"
+          class="form-control"
+          id="checkout"
+          name="check_out"
+          [(ngModel)]="check_out"
+          required
+        />
+      </div>
+    </div>
+
+    <div class="col-12 md:col-6">
+      <label for="adultos" class="form-label">Número de Adultos</label>
+      <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+        <input
+          type="number"
+          class="form-control"
+          id="adultos"
+          name="adultos"
+          placeholder="1"
+          [(ngModel)]="adultos"
+          required
+          min="1"
+        />
+      </div>
+    </div>
+
+    <div class="col-12 md:col-6">
+      <label for="criancas" class="form-label">Número de Crianças</label>
+      <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-people-fill"></i></span>
+        <input
+          type="number"
+          class="form-control"
+          id="criancas"
+          name="criancas"
+          placeholder="0"
+          [(ngModel)]="criancas"
+          min="0"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="d-grid mt-4">
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="!formCadastroDestino.valid"
+    >
+      Salvar Destino
+    </button>
+  </div>
 </form>

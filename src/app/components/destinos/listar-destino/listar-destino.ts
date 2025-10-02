@@ -34,6 +34,8 @@ export class ListarDestino {
   modalHoteisAberto = false;
 
   hoteis:any[] = []
+  hoteisSalvos: any[] = []
+  carregandoHoteisSalvos = false;
   carregando = false
 
   abrirModal(): void {
@@ -79,19 +81,30 @@ export class ListarDestino {
     this.carregarDestinos();
   }
 
-  carregarDestinos(): void {
-    this.destinoteService.listarDestinos().subscribe({
-      next: (listarDestinos: any[]) => {
-        this.destinos = listarDestinos;
-        console.log(this.destinos);
-        this.detectorMudanca.detectChanges();
-      },
-      error: error => {
-        console.log('erro ao buscar destinos');
-        console.log(error);
-      }
-    });
-  }
+carregarDestinos(): void {
+  this.destinoteService.listarDestinos().subscribe({
+    next: (listarDestinos: any[]) => {
+      this.destinos = listarDestinos;
+      this.destinos.forEach(destino => {
+        this.destinoteService.ListarHoteisDestino(destino.id).subscribe({
+          next: (hoteis: any[]) => {
+            destino.hoteis = hoteis; 
+            this.detectorMudanca.detectChanges();
+          },
+          error: err => {
+            console.error(`Erro ao buscar hotéis do destino ${destino.id}:`, err);
+          }
+        });
+      });
+
+      this.detectorMudanca.detectChanges();
+    },
+    error: error => {
+      console.log('erro ao buscar destinos', error);
+    }
+  });
+}
+
 
   excluirDestinos(id: any): void { 
     if (confirm('Deseja mesmo excluir esse dependente?')) {
@@ -153,13 +166,9 @@ buscarHoteis(id: any): void {
   salvarHoteis(hotel: any, destino: any):void {
     let precoLimpo: number = 0;
 
-    // A propriedade "extracted_price" já é um número, é a melhor opção
     if (hotel.extracted_price) {
       precoLimpo = hotel.extracted_price;
     } else if (hotel.price) {
-      // Se "extracted_price" não existir, usa a string "price" e limpa
-      // 1. Remove tudo que não for dígito, vírgula ou ponto
-      // 2. Troca a vírgula por ponto para usar como separador decimal
       precoLimpo = parseFloat(hotel.price.replace(/[^\d,.]/g, '').replace(',', '.'));
     }
 
@@ -183,8 +192,10 @@ buscarHoteis(id: any): void {
         alert('Erro ao salvar hotel.');
 
       }
-    })
-
-
+    });
   }
+
+
+
 }
+

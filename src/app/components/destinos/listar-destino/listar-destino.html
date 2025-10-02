@@ -1,114 +1,130 @@
 <div class="page-container">
-    <div id="container-body">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <span class="card-title mb-0">Meus Destinos</span>
+  <div id="container-body">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <span class="card-title mb-0">Meus Destinos</span>
 
-            <button type="button" class="btn btn-success btn-lg" (click)="abrirModal()">
-                Adicionar Destino
-            </button>
-        </div>
-
-        <div class="card p-4">
-            <div class="mt-2">
-                <div class="table-responsive">
-                    <table class="table table-dark table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Destino</th>
-                                <th scope="col">Check-in</th>
-                                <th scope="col">Check-out</th>
-                                <th scope="col">Adultos</th>
-                                <th scope="col">Crianças</th>
-                                <th scope="col">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let destino of destinos; let i = index">
-                                <th scope="row">{{ i + 1 }}</th>
-                                <td>{{ destino.destino }}</td>
-                                <td>{{ destino.check_in }}</td>
-                                <td>{{ destino.check_out }}</td>
-                                <td>{{ destino.adultos }}</td>
-                                <td>{{ destino.criancas }}</td>
-                                <td>
-                                    <button class="btn btn-sm btn-info me-2" (click)="abrirModalEdicao(destino)">
-                                        <i class="fa-solid fa-pencil"></i>
-                                    </button>
-                                    
-                                    <button class="btn btn-sm btn-warning me-2" (click)="abrirModalHoteis(destino)">
-                                        <i class="fa-solid fa-hotel"></i>
-                                    </button>
-
-                                    <button class="btn btn-sm btn-danger" (click)="excluirDestinos(destino.id)">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>                            
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div *ngIf="modalAberto" class="modal fade show" tabindex="-1" role="dialog" style="display: block;"
-                aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content bg-dark text-white">
-                        <div class="modal-header border-bottom border-secondary">
-                            <h1 class="modal-title fs-5" id="exampleModalLabel">Cadastro Destino</h1>
-                            <button type="button" class="btn-close btn-close-white" (click)="fecharModal()"
-                                aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <app-cadastro-destino (fecharModal)="fecharModal()"></app-cadastro-destino>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div *ngIf="modalAberto" class="modal-backdrop fade show"></div>
-
-            <div *ngIf="modalEditarAberto" class="modal fade show" tabindex="-1" role="dialog"
-                style="display: block;" aria-labelledby="editModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content bg-dark text-white">
-                        <div class="modal-header border-bottom border-secondary">
-                            <h1 class="modal-title fs-5" id="editModalLabel">Editar Destino</h1>
-                            <button type="button" class="btn-close btn-close-white" (click)="fecharModalEdicao()"
-                                aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <app-cadastro-destino 
-                                [destinoEdicao]="destinoSelecionado"
-                                (fecharModal)="fecharModalEdicao()">
-                            </app-cadastro-destino>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div *ngIf="modalHoteisAberto" class="modal fade show" tabindex="-1" role="dialog"
-                style="display: block;" aria-labelledby="hoteisModalLabel" aria-modal="true">
-                <div class="modal-dialog modal-xl">
-                    <div class="modal-content bg-dark text-white">
-                        <div class="modal-header border-bottom border-secondary">
-                            <h1 class="modal-title fs-5" id="hoteisModalLabel">Hotéis para: {{ destinoSelecionado?.destino }}</h1>
-                            <button type="button" class="btn-close btn-close-white" (click)="fecharModalHoteis()"
-                                aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                              <app-hoteis
-                                [hoteis]="hoteis" 
-                                [carregando]="carregando"
-                                [destino]="destinoSelecionado"
-                                (salvarHotelEvent)="salvarHoteis($event.hotel, $event.destino)"
-                        ></app-hoteis>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div *ngIf="modalHoteisAberto" class="modal-backdrop fade show"></div>
-        </div>
+      <button type="button" class="btn btn-success btn-lg" (click)="abrirModal()">
+        Adicionar Destino
+      </button>
     </div>
+
+    <div class="card p-4">
+      <div class="mt-2">
+        <div class="table-responsive">
+          <table class="table table-dark table-striped table-hover">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Destino</th>
+                <th scope="col">Check-in</th>
+                <th scope="col">Check-out</th>
+                <th scope="col">Adultos</th>
+                <th scope="col">Crianças</th>
+                <th scope="col">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- 🔥 agrupei destino + hotéis -->
+              <ng-container *ngFor="let destino of destinos; let i = index">
+                <tr>
+                  <th scope="row">{{ i + 1 }}</th>
+                  <td>{{ destino.destino }}</td>
+                  <td>{{ destino.check_in }}</td>
+                  <td>{{ destino.check_out }}</td>
+                  <td>{{ destino.adultos }}</td>
+                  <td>{{ destino.criancas }}</td>
+                  <td>
+                    <button class="btn btn-sm btn-info me-2" (click)="abrirModalEdicao(destino)">
+                      <i class="fa-solid fa-pencil"></i>
+                    </button>
+                    <button class="btn btn-sm btn-warning me-2" (click)="abrirModalHoteis(destino)">
+                      <i class="fa-solid fa-hotel"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" (click)="excluirDestinos(destino.id)">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+
+                <tr *ngIf="destino.hoteis && destino.hoteis.length > 0">
+                  <td colspan="7">
+                    <div class="ms-4">
+                      <i class="fa-solid fa-hotel"></i><strong> Hotéis selecionados:</strong>
+                      <ul class="mb-0">
+                        <div *ngFor="let hotel of destino.hoteis">
+                            <td><strong>Hotel:</strong> {{hotel.hotel}}</td>
+                            <tr><strong>Estrelas:</strong> {{hotel.hotel_classification}}</tr>
+                            <td><strong>Preço:</strong> ${{hotel.hotel_price}}</td>
+
+
+                        </div>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- modal cadastrar -->
+      <div *ngIf="modalAberto" class="modal fade show" tabindex="-1" role="dialog" style="display: block;"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content bg-dark text-white">
+            <div class="modal-header border-bottom border-secondary">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">Cadastro Destino</h1>
+              <button type="button" class="btn-close btn-close-white" (click)="fecharModal()" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <app-cadastro-destino (fecharModal)="fecharModal()"></app-cadastro-destino>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="modalAberto" class="modal-backdrop fade show"></div>
+
+      <!-- modal editar -->
+      <div *ngIf="modalEditarAberto" class="modal fade show" tabindex="-1" role="dialog" style="display: block;"
+        aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content bg-dark text-white">
+            <div class="modal-header border-bottom border-secondary">
+              <h1 class="modal-title fs-5" id="editModalLabel">Editar Destino</h1>
+              <button type="button" class="btn-close btn-close-white" (click)="fecharModalEdicao()" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <app-cadastro-destino 
+                [destinoEdicao]="destinoSelecionado"
+                (fecharModal)="fecharModalEdicao()">
+              </app-cadastro-destino>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- modal hotéis -->
+      <div *ngIf="modalHoteisAberto" class="modal fade show" tabindex="-1" role="dialog" style="display: block;"
+        aria-labelledby="hoteisModalLabel" aria-modal="true">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content bg-dark text-white">
+            <div class="modal-header border-bottom border-secondary">
+              <h1 class="modal-title fs-5" id="hoteisModalLabel">Hotéis para: {{ destinoSelecionado?.destino }}</h1>
+              <button type="button" class="btn-close btn-close-white" (click)="fecharModalHoteis()" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <app-hoteis
+                [hoteis]="hoteis" 
+                [carregando]="carregando"
+                [destino]="destinoSelecionado"
+                (salvarHotelEvent)="salvarHoteis($event.hotel, $event.destino)">
+              </app-hoteis>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="modalHoteisAberto" class="modal-backdrop fade show"></div>
+    </div>
+  </div>
 </div>
