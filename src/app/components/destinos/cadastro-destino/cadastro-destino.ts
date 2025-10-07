@@ -4,12 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { NgxMaskDirective } from 'ngx-mask';
 import { DestinosService } from '../destinos-service';
 import { Router } from '@angular/router';
-import { AutoComplete } from 'primeng/autocomplete';
+
+// CORREÇÃO 1: Importe o MÓDULO, não a classe do componente.
+import { AutoCompleteModule } from 'primeng/autocomplete';
 
 @Component({
   selector: 'app-cadastro-destino',
   standalone: true,
-  imports: [FormsModule, CommonModule, NgxMaskDirective, AutoComplete],
+  // CORREÇÃO 2: Use o MÓDULO aqui.
+  imports: [FormsModule, CommonModule, NgxMaskDirective, AutoCompleteModule],
   templateUrl: './cadastro-destino.html',
   styleUrls: ['./cadastro-destino.css']
 })
@@ -18,16 +21,14 @@ export class CadastroDestino implements OnInit {
   @Output() fecharModal = new EventEmitter<void>();
 
   cidades: any[] = [];
+  cidadeSelecionadaObj: any = null; // Única variável necessária para o autocomplete
 
-  cidadeSelecionada: any = null; // 🔑 agora esse é o valor do autocomplete
-
+  // Propriedades do formulário
   id!: string;
   check_in!: string;
   check_out!: string;
   adultos!: number;
   criancas!: number;
-  status!: string;
-  usuario_id!: number;
 
   constructor(
     private readonly destinoService: DestinosService,
@@ -42,11 +43,13 @@ export class CadastroDestino implements OnInit {
       this.adultos = this.destinoEdicao.adultos;
       this.criancas = this.destinoEdicao.criancas;
 
-      // 🔑 Preenche cidadeSelecionada com o objeto
-      this.cidadeSelecionada = {
+      // CORREÇÃO 3: Preenche o objeto a partir de 'destinoEdicao', não dele mesmo.
+      this.cidadeSelecionadaObj = {
         id: this.destinoEdicao.cidade_id,
         nome: this.destinoEdicao.destino,
-        codigo_iat: this.destinoEdicao.codigo_iat
+        codigo_iat: this.destinoEdicao.codigo_iat,
+        // O 'label' é crucial para a exibição inicial no campo de texto
+        label: `${this.destinoEdicao.destino} (${this.destinoEdicao.codigo_iat || ''})`.trim()
       };
     }
   }
@@ -58,7 +61,7 @@ export class CadastroDestino implements OnInit {
         next: (dados) => {
           this.cidades = dados.map((c: any) => ({
             ...c,
-            label: `${c.nome} (${c.codigo_iat})`
+            label: `${c.nome} (${c.codigo_iat ?? ''})`
           }));
         },
         error: (err) => {
@@ -71,45 +74,35 @@ export class CadastroDestino implements OnInit {
     }
   }
 
+  // O onSelect no HTML já atualiza o objeto `cidadeSelecionadaObj` através do ngModel.
+  // Este método explícito não é mais necessário, mas não causa mal.
+
   onSubmit(): void {
-    if (!this.cidadeSelecionada) {
-      alert('Selecione uma cidade válida!');
+    if (!this.cidadeSelecionadaObj || typeof this.cidadeSelecionadaObj !== 'object') {
+      alert('Selecione uma cidade válida da lista!');
       return;
     }
 
     const dadosEnvio = {
       id: this.id,
-      destino: this.cidadeSelecionada.nome,
+      destino: this.cidadeSelecionadaObj.nome,
       check_in: this.check_in,
       check_out: this.check_out,
       adultos: this.adultos,
       criancas: this.criancas,
-      cidade_id: this.cidadeSelecionada.id,
-      codigo_iat: this.cidadeSelecionada.codigo_iat
+      cidade_id: this.cidadeSelecionadaObj.id,
+      codigo_iat: this.cidadeSelecionadaObj.codigo_iat
     };
 
     if (this.id) {
       this.destinoService.EditarDestinos(dadosEnvio).subscribe({
-        next: () => {
-          alert('Destino atualizado com sucesso!');
-          this.fecharModal.emit();
-        },
-        error: (error) => {
-          console.error('Erro ao atualizar', error);
-          alert('Erro ao atualizar destino.');
-        }
+        next: () => { alert('Destino atualizado com sucesso!'); this.fecharModal.emit(); },
+        error: (error) => { console.error('Erro ao atualizar', error); alert('Erro ao atualizar destino.'); }
       });
     } else {
       this.destinoService.CadastroDestinos(dadosEnvio).subscribe({
-        next: () => {
-          alert('Cadastro realizado com sucesso!');
-          this.fecharModal.emit();
-          this.router.navigate(['/destinos/listar']);
-        },
-        error: (error) => {
-          console.error('Erro ao cadastrar', error);
-          alert('Erro ao cadastrar');
-        }
+        next: () => { alert('Cadastro realizado com sucesso!'); this.fecharModal.emit(); this.router.navigate(['/destinos/listar']); },
+        error: (error) => { console.error('Erro ao cadastrar', error); alert('Erro ao cadastrar'); }
       });
     }
   }

@@ -5,13 +5,14 @@
       <div class="input-group">
         <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
         <p-autoComplete
-          [(ngModel)]="cidadeSelecionada"
+          inputId="destino"
+          [(ngModel)]="cidadeSelecionadaObj"
           name="cidadeSelecionada"
           [dropdown]="true"
+          field ='label'
           [suggestions]="cidades"
-          optionLabel="label"
+          [forceSelection]="true"
           (completeMethod)="buscarCidades($event)"
-          (onSelect)="selecionarCidade($event)"
           placeholder="Digite a cidade"
           [minLength]="3"
           class="form-control"

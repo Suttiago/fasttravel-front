@@ -10,6 +10,7 @@ import { DependentesService } from '../../dependentes/dependentes-service';
 import { CadastroDestino } from '../cadastro-destino/cadastro-destino';
 import { DestinosService } from '../destinos-service';
 import { Hoteis } from '../hoteis/hoteis';
+import { Passagens } from '../passagens/passagens';
 
 @Component({
   selector: 'app-listar-destino',
@@ -19,8 +20,9 @@ import { Hoteis } from '../hoteis/hoteis';
     CadastroDestino,
     FormsModule,
     DialogModule,
-    InputTextModule,
-    Hoteis],
+  InputTextModule,
+  Hoteis,
+  Passagens],
   templateUrl: './listar-destino.html',
   styleUrl: './listar-destino.css'
 })
@@ -32,11 +34,17 @@ export class ListarDestino {
   destinoSelecionado: any = null;
   modalEditarAberto = false;
   modalHoteisAberto = false;
+  modalPassagensAberto = false;
 
   hoteis:any[] = []
   hoteisSalvos: any[] = []
   carregandoHoteisSalvos = false;
   carregando = false
+
+  passagens:any[] = []
+  passagensSalvas: any[] = []
+  carregandoPassagensSalvas = false;
+  carregandoPassagens = false
 
   abrirModal(): void {
     this.modalAberto = true;
@@ -67,8 +75,20 @@ export class ListarDestino {
     this.buscarHoteis(destino.id);
   }
 
+  abrirModalPassagens(destino: any): void {
+    this.carregandoPassagens = true;
+    this.destinoSelecionado = destino;
+  this.modalPassagensAberto = true;
+
+  this.buscarPassagens(destino.id);
+  }
+
   fecharModalHoteis(): void {
     this.modalHoteisAberto = false;
+  }
+
+  fecharModalPassagens(): void {
+    this.modalPassagensAberto = false;
   }
 
 
@@ -93,6 +113,15 @@ carregarDestinos(): void {
           },
           error: err => {
             console.error(`Erro ao buscar hotéis do destino ${destino.id}:`, err);
+          }
+        });
+        this.destinoteService.ListarPassagemsDestino(destino.id).subscribe({
+          next: (passagens: any[]) => {
+            destino.passagens = passagens;
+            this.detectorMudanca.detectChanges();
+          },
+          error: err => {
+            console.error(`Erro ao buscar passagens do destino ${destino.id}:`, err);
           }
         });
       });
@@ -135,12 +164,12 @@ carregarDestinos(): void {
     })
   }
 
-buscarHoteis(id: any): void {
+  buscarHoteis(id: any): void {
     this.destinoteService.BuscarHoteis(id).subscribe({
       next: (res: any) => {
         console.log('Resposta completa da API:', res);
 
-        this.hoteis = res.ads.map((hotel: any) => {
+        this.hoteis = (res.ads || []).map((hotel: any) => {
           return {
             name: hotel.name,
             price: hotel.price,
@@ -151,14 +180,14 @@ buscarHoteis(id: any): void {
           };
         });
 
-        this.carregando = false; 
-        this.detectorMudanca.detectChanges()
+        this.carregando = false;
+        this.detectorMudanca.detectChanges();
       },
       error: (err) => {
         console.error('Erro ao buscar hotéis:', err);
         alert('Erro ao buscar hotéis.');
-        this.carregando = false; 
-        this.detectorMudanca.detectChanges()
+        this.carregando = false;
+        this.detectorMudanca.detectChanges();
       }
     });
   }
@@ -191,11 +220,71 @@ buscarHoteis(id: any): void {
         console.error('Erro ao salvar hotel:', err);
         alert('Erro ao salvar hotel.');
 
+     }
+   });
+ }
+buscarPassagens(id: any): void {
+    this.destinoteService.BuscarPassagem(id).subscribe({
+      next: (res: any) => {
+      console.log('Resposta completa da API (passagens):', res);
+ // 1. Unificar todos os voos de 'best_flights' e 'other_flights'
+      const bestFlights = res.best_flights || [];
+      const otherFlights = res.other_flights || [];
+      const detailsLink = res.search_metadata?.google_flights_url || null;
+      this.passagens = [...bestFlights, ...otherFlights].map((voo: any) => {
+ 
+      voo.link = voo.link || detailsLink;
+ 
+        if (voo.flights && voo.flights.length > 0) {
+          const primeiroTrecho = voo.flights[0];
+          const ultimoTrecho = voo.flights[voo.flights.length - 1];
+          voo.departureCity = primeiroTrecho?.departure_airport?.name;
+          voo.arrivalCity = ultimoTrecho?.arrival_airport?.name;
+        }
+        return voo;
+       });
+       this.carregandoPassagens = false;
+       this.detectorMudanca.detectChanges();
+      },
+      error: (err) => {
+        console.error('Erro ao buscar passagens:', err);
+        alert('Erro ao buscar passagens.');
+        this.carregandoPassagens = false;
+        this.detectorMudanca.detectChanges();
+      }});
+ }
+ salvarPassagem(voo: any, destino: any): void {
+  if (!voo || !voo.flights || voo.flights.length === 0) {
+        console.error('Objeto de voo inválido fornecido.', voo);
+        alert('Não foi possível salvar a passagem. Dados incompletos.');
+        return;
       }
-    });
+      const primeiroTrecho = voo.flights[0];
+      const ultimoTrecho = voo.flights[voo.flights.length - 1];
+      const passagemSalva = {
+                aeroporto_saida: primeiroTrecho?.departure_airport?.name,
+                aeroporto_chegada: ultimoTrecho?.arrival_airport?.name,
+                aviao: primeiroTrecho?.airplane,
+                linha_aerea: primeiroTrecho?.airline,
+                preco_passagem: voo.price,
+                destino_id: destino.id 
+              };
+              this.destinoteService.SalvarPassagem(passagemSalva).subscribe({
+                next: (res) => {
+                  alert('Passagem salva com sucesso!');
+                  console.log('Passagem salva:', res);
+                },
+                error: (err) => {
+                  console.error('Erro ao salvar passagem:', err);
+                  alert('Erro ao salvar passagem.');
+                }
+              });
+ }
+// Compatibilidade com o nome usado no template: delega para salvarPassagem
+  salvarPassagens(voo: any, destino: any): void {
+    this.salvarPassagem(voo, destino);
   }
-
-
-
 }
+
+
 

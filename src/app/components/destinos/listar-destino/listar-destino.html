@@ -24,7 +24,6 @@
               </tr>
             </thead>
             <tbody>
-              <!-- 🔥 agrupei destino + hotéis -->
               <ng-container *ngFor="let destino of destinos; let i = index">
                 <tr>
                   <th scope="row">{{ i + 1 }}</th>
@@ -39,6 +38,9 @@
                     </button>
                     <button class="btn btn-sm btn-warning me-2" (click)="abrirModalHoteis(destino)">
                       <i class="fa-solid fa-hotel"></i>
+                    </button>
+                    <button class="btn btn-sm btn-primary me-2" (click)="abrirModalPassagens(destino)">
+                      <i class="fa-solid fa-plane-departure"></i>
                     </button>
                     <button class="btn btn-sm btn-danger" (click)="excluirDestinos(destino.id)">
                       <i class="fa-solid fa-trash"></i>
@@ -55,13 +57,42 @@
                             <td><strong>Hotel:</strong> {{hotel.hotel}}</td>
                             <tr><strong>Estrelas:</strong> {{hotel.hotel_classification}}</tr>
                             <td><strong>Preço:</strong> ${{hotel.hotel_price}}</td>
-
-
                         </div>
                       </ul>
                     </div>
                   </td>
                 </tr>
+
+               <tr *ngIf="destino.passagens && destino.passagens.length > 0">
+  <td colspan="7">
+    <div class="ms-4">
+      <i class="fa-solid fa-plane-departure"></i><strong> Passagens selecionadas:</strong>
+      <ul class="mb-0">
+        <li *ngFor="let p of destino.passagens" class="d-flex flex-column mb-2 border-bottom pb-1">
+
+          <span>
+            <strong>Rota:</strong> 
+            {{p.aeroporto_saida}} → {{p.aeroporto_chegada}}
+          </span>
+
+          <span>
+            <strong>Companhia:</strong> {{p.linha_aerea}} | 
+            <strong>Avião:</strong> {{p.aviao}}
+          </span>
+
+          <span>
+            <strong>Duração:</strong> {{p.duracao_voo || p.duracao_voou}}
+          </span>
+
+          <span>
+            <strong>Preço:</strong> ${{p.preco_passagem | number : '1.2-2'}}
+          </span>
+
+        </li>
+      </ul>
+    </div>
+  </td>
+</tr>
               </ng-container>
             </tbody>
           </table>
@@ -125,6 +156,28 @@
         </div>
       </div>
       <div *ngIf="modalHoteisAberto" class="modal-backdrop fade show"></div>
+      
+      <!-- modal passagens -->
+      <div *ngIf="modalPassagensAberto" class="modal fade show" tabindex="-1" role="dialog" style="display: block;"
+        aria-labelledby="passagensModalLabel" aria-modal="true">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content bg-dark text-white">
+            <div class="modal-header border-bottom border-secondary">
+              <h1 class="modal-title fs-5" id="passagensModalLabel">Passagens para: {{ destinoSelecionado?.destino }}</h1>
+              <button type="button" class="btn-close btn-close-white" (click)="fecharModalPassagens()" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <app-passagens
+                [passagens]="passagens"
+                [carregando]="carregandoPassagens"
+                [destino]="destinoSelecionado"
+                (salvarPassagemEvent)="salvarPassagem($event.passagem, $event.destino)">
+              </app-passagens>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="modalPassagensAberto" class="modal-backdrop fade show"></div>
     </div>
   </div>
 </div>

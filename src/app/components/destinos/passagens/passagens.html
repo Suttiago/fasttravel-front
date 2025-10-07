@@ -1,0 +1,58 @@
+<div class="passagens-container">
+    <div *ngIf="carregando" class="text-center">
+        <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+
+    <div *ngIf="!carregando && passagens && passagens.length > 0">
+        <div class="table-responsive">
+            <table class="table table-bordered table-dark table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Foto</th>
+                        <th scope="col">Rota</th>
+                        <th scope="col">Duração</th>
+                        <th scope="col">Avião</th>
+                        <th scope="col">Companhia</th>
+                        <th scope="col">Preço</th>
+                        <th scope="col">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let p of passagens">
+                        <td>
+                            <img [src]="p.thumbnail || p.image || p.airline_logo" alt="Foto" class="hotel-thumbnail">
+                        </td>
+                        <td>
+                            <strong>
+                                {{
+                                    (p.departureCity && p.arrivalCity) ? (p.departureCity + ' → ' + p.arrivalCity) :
+                                    (p.flights ? (p.flights[0]?.departure_airport?.name + ' → ' + (p.flights[p.flights.length-1]?.arrival_airport?.name || '')) : 'Rota')
+                                }}
+                            </strong>
+                        </td>
+                        <td>{{ p.total_duration }}</td>
+                        
+                        <td>{{ p.flights?.[0]?.airplane || p.aviao || '-' }}</td>
+                        
+                        <td>{{ p.flights?.[0]?.airline || p.linha_aerea || '-' }}</td>
+                        
+                        <td>{{ p.price || p.preco_passagem || '-' }}</td>
+                        
+                        <td>
+                            <a *ngIf="p.link" [href]="p.link" target="_blank" class="btn btn-sm btn-primary">Ver Detalhes</a>
+                            <button class="btn btn-sm btn-success" (click)="salvarPassagem(p)">
+                                <i class="fa-solid fa-bookmark"></i> Salvar
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div *ngIf="!carregando && (!passagens || passagens.length === 0)">
+        <div class="alert alert-warning">Nenhuma passagem encontrada para este destino.</div>
+    </div>
+</div>

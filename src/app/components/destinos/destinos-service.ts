@@ -46,5 +46,17 @@ export class DestinosService {
     const params = new HttpParams().set('termo', termo);
     return this.httpCliente.get<any[]>(`http://localhost:5001/Cidades/Listar`,{params});
   }
+
+  BuscarPassagem(id:any):Observable<any>{
+    return this.httpCliente.post<any>(`http://localhost:5001/BuscarPassagens/${id}`,id);
+  }
+
+  SalvarPassagem(passagem:any):Observable<any>{
+    return this.httpCliente.post<any>(`http://localhost:5001/SalvarPassagens`,passagem);
+  }
+  
+  ListarPassagemsDestino(destino_id: any): Observable<any>{
+    return this.httpCliente.get<any>(`http://localhost:5001/ListarPassagensPorDestino/${destino_id}`,)
+  }
   
 }
