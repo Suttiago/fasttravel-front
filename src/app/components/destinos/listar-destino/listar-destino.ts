@@ -11,6 +11,7 @@ import { CadastroDestino } from '../cadastro-destino/cadastro-destino';
 import { DestinosService } from '../destinos-service';
 import { Hoteis } from '../hoteis/hoteis';
 import { Passagens } from '../passagens/passagens';
+import { Orcamentos } from '../orcamentos/orcamentos';
 
 @Component({
   selector: 'app-listar-destino',
@@ -22,7 +23,9 @@ import { Passagens } from '../passagens/passagens';
     DialogModule,
   InputTextModule,
   Hoteis,
-  Passagens],
+  Passagens,
+  Orcamentos],
+  
   templateUrl: './listar-destino.html',
   styleUrl: './listar-destino.css'
 })
@@ -35,6 +38,12 @@ export class ListarDestino {
   modalEditarAberto = false;
   modalHoteisAberto = false;
   modalPassagensAberto = false;
+
+  // Orçamentos
+  modalOrcamentosAberto = false;
+  totalHoteis: number | null = null;
+  totalPassagens: number | null = null;
+  totalOrcamento: number | null = null;
 
   hoteis:any[] = []
   hoteisSalvos: any[] = []
@@ -81,6 +90,52 @@ export class ListarDestino {
   this.modalPassagensAberto = true;
 
   this.buscarPassagens(destino.id);
+  }
+
+  abrirModalOrcamentos(destino: any): void {
+    console.log('abrirModalOrcamentos chamado para destino:', destino);
+    this.destinoSelecionado = destino;
+    // calcula total de hoteis e menor passagem
+    const total = (destino.hoteis || []).reduce((s: number, h: any) => s + (h.hotel_price || h.hotel_price === 0 ? Number(h.hotel_price) : 0), 0);
+    this.totalHoteis = total || null;
+    const somaPassagens = (destino.passagens || []).reduce((s: number, p: any) => {
+      const val = p.preco_passagem ?? p.price ?? 0;
+      return s + (typeof val === 'number' ? val : parseFloat(val) || 0);
+    }, 0);
+    this.totalPassagens = (somaPassagens === 0) ? null : somaPassagens;
+    this.totalOrcamento = (this.totalHoteis || 0) + (this.totalPassagens || 0);
+    this.modalOrcamentosAberto = true;
+    console.log('modalOrcamentosAberto set to true');
+  }
+
+  onAprovarOrcamento(): void {
+    if (!this.destinoSelecionado) return;
+    this.destinoteService.aceitarDestino(this.destinoSelecionado.id).subscribe({
+      next: () => {
+        alert('Destino aceito com sucesso');
+        this.modalOrcamentosAberto = false;
+        this.carregarDestinos();
+      },
+      error: (err) => {
+        console.error('Erro ao aceitar destino:', err);
+        alert('Erro ao aceitar destino');
+      }
+    });
+  }
+
+  onRecusarOrcamento(): void {
+    if (!this.destinoSelecionado) return;
+    this.destinoteService.recusarDestino(this.destinoSelecionado.id).subscribe({
+      next: () => {
+        alert('Destino recusado com sucesso');
+        this.modalOrcamentosAberto = false;
+        this.carregarDestinos();
+      },
+      error: (err) => {
+        console.error('Erro ao recusar destino:', err);
+        alert('Erro ao recusar destino');
+      }
+    });
   }
 
   fecharModalHoteis(): void {

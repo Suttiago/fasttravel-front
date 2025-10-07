@@ -59,4 +59,11 @@ export class DestinosService {
     return this.httpCliente.get<any>(`http://localhost:5001/ListarPassagensPorDestino/${destino_id}`,)
   }
   
+  aceitarDestino(destino_id: any): Observable<any> {
+    return this.httpCliente.put<any>(`http://localhost:5001/AceitarDest/${destino_id}`, {});
+  }
+
+  recusarDestino(destino_id: any): Observable<any> {
+    return this.httpCliente.put<any>(`http://localhost:5001/RecusarDest/${destino_id}`, {});
+  }
 }

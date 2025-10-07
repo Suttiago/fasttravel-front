@@ -1,0 +1,64 @@
+<div *ngIf="modalAberto" class="modal fade show" tabindex="-1" role="dialog" style="display: block;" aria-labelledby="orcamentosModalLabel" aria-modal="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content bg-dark text-white">
+			<div class="modal-header border-bottom border-secondary">
+				<h1 class="modal-title fs-5" id="orcamentosModalLabel">Orçamento</h1>
+				<button type="button" class="btn-close btn-close-white" (click)="fechar()" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="container-fluid">
+					<div class="row mb-3">
+						<div class="col-12">
+							<h5>Resumo de preços</h5>
+						</div>
+					</div>
+
+					<div class="row mb-2">
+						<div class="col-8">
+							<strong>Preço total dos hotéis</strong>
+						</div>
+						<div class="col-4 text-end">
+							{{ precoHoteisDisplay || '-' }}
+						</div>
+					</div>
+
+					<div class="row mb-4">
+						<div class="col-8">
+							<strong>Preço total das passagens</strong>
+						</div>
+						<div class="col-4 text-end">
+							{{ precoPassagensDisplay || '-' }}
+						</div>
+					</div>
+
+					<div class="row mb-4 border-top pt-3">
+						<div class="col-8">
+							<strong>Total do orçamento</strong>
+						</div>
+						<div class="col-4 text-end">
+							{{ totalOrcamentoDisplay || '-' }}
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-12">
+							<p class="small text-muted">Revise os valores antes de aprovar ou recusar o orçamento.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<div class="w-100 d-flex justify-content-between">
+					<div>
+						<button class="btn btn-success" (click)="aprovar()">Aprovar orçamento</button>
+					</div>
+					<div>
+						<button class="btn btn-danger" (click)="recusar()">Recusar orçamento</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div *ngIf="modalAberto" class="modal-backdrop fade show"></div>
