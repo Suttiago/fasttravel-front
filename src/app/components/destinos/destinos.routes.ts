@@ -14,5 +14,10 @@ export const DESTINO_ROUTES: Routes = [
       import('./cadastro-destino/cadastro-destino').then(m=>m.CadastroDestino)
   },
 
+  {
+    path: 'orcamentos',
+    loadComponent: () => import('./listar-orcamentos/listar-orcamentos').then(m => m.ListarOrcamentos)
+  }
+
   
 ];

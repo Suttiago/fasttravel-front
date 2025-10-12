@@ -1,26 +1,41 @@
 <div class="home-container">
-    <div class="container mt-5 pt-5" style="margin-top: 100px;">
-        <div class="text-center mb-5">
-            <h1>Bem-vindo ao Painel FastTravel</h1>
-            <p class="lead">Escolha uma opção para começar:</p>
-  </div>
-  <div class="row justify-content-center g-4">
-    <div class="col-md-4">
-        <div class="card bg-secondary text-white h-100">
-            <div class="card-body d-flex flex-column justify-content-between">
-                <h5 class="card-title">Destinos</h5>
-                <a routerLink="/destinos/listar" class="btn btn-primary mt-3">Ir para Lista de Destino</a>
+    <div class="container text-center">
+        <h1>Bem-vindo ao Painel FastTravel</h1>
+        <p class="lead">Escolha uma opção para começar sua jornada:</p>
+    </div>
+
+    <div class="row justify-content-center g-4 mt-4">
+        <div class="col-md-4">
+            <div class="custom-card">
+                <div class="card-body">
+                    <h5 class="card-title">Destinos</h5>
+                    <p class="card-text">Planeje e gerencie suas próximas viagens.</p>
+                    <button class="btn-primary">
+                      <a routerLink="/destinos/listar" class="btn btn-main">Ver Destinos</a>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="custom-card">
+                <div class="card-body">
+                    <h5 class="card-title">Dependentes</h5>
+                    <p class="card-text">Adicione e gerencie os acompanhantes.</p>
+                    <a routerLink="/dependentes/listar" class="btn btn-main">Ver Dependentes</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="custom-card">
+                <div class="card-body">
+                    <h5 class="card-title">Financeiro</h5>
+                    <p class="card-text">Acompanhe orçamentos e despesas.</p>
+                    <div class="d-grid gap-2">
+                        <a routerLink="/destinos/orcamentos" class="btn btn-main">Orçamentos</a>
+                        <a routerLink="/financeiro/contas-pagar" class="btn btn-main">Contas a Pagar</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card bg-secondary text-white h-100">
-        <div class="card-body d-flex flex-column justify-content-between">
-          <h5 class="card-title">Dependentes</h5>
-          <a routerLink="/dependentes/listar" class="btn btn-primary mt-3">Ir para Lista de Dependentes</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 </div>

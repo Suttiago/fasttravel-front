@@ -1,0 +1,36 @@
+<div class="page-container">
+  <div id="container-body">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <span class="card-title mb-0">Orçamentos</span>
+    </div>
+
+    <div class="card p-4">
+      <div class="table-responsive">
+        <table class="table table-dark table-striped table-hover">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Destino</th>
+              <th>Valor Hoteis</th>
+              <th>Valor Passagens</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let o of orcamentos">
+              <td>{{ o.id }}</td>
+              <td>{{ o.destino_id }}</td>
+              <td>${{ o.valor_hoteis}}</td>
+              <td>${{ o.valor_passagens}}</td>
+              <td>${{ o.valor_total}}</td>
+              <td>{{ o.status }}</td>
+              <td><button>aaa</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

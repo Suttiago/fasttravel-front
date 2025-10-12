@@ -42,11 +42,11 @@
                     <button class="btn btn-sm btn-primary me-2" (click)="abrirModalPassagens(destino)">
                       <i class="fa-solid fa-plane-departure"></i>
                     </button>
-                    <button class="btn btn-sm btn-secondary me-2" (click)="abrirModalOrcamentos(destino)">
-                      <i class="fa-solid fa-file-invoice-dollar"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger" (click)="excluirDestinos(destino.id)">
+                    <button class="btn btn-sm btn-danger me-2" (click)="excluirDestinos(destino.id)">
                       <i class="fa-solid fa-trash"></i>
+                    </button>
+                    <button class="btn btn-sm btn-success me-2" (click)="abrirModalOrcamentos(destino)">
+                      <i class="fa-solid fa-file-invoice-dollar"></i>
                     </button>
                   </td>
                 </tr>
@@ -188,7 +188,8 @@
         [precoHoteis]="totalHoteis"
         [precoPassagens]="totalPassagens"
         [totalOrcamento]="totalOrcamento"
-        (aprovado)="onAprovarOrcamento()"
+        displayMode="modal"
+        (aprovado)="onAprovarOrcamento($event)"
         (recusado)="onRecusarOrcamento()"
         (fecharModal)="modalOrcamentosAberto = false">
       </app-orcamentos>

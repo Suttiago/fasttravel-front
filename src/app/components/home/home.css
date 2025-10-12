@@ -1,25 +1,83 @@
 .home-container {
-  background-color:#212121; 
-  min-height: calc(100vh - 80px); 
-  padding-top: 100px; 
-  margin-top: 80px;
+    display: flex;
+    flex-direction: column; /* Para empilhar título/botão e card */
+    justify-content: center; /* Alinha ao topo */
+    align-items: center;
+    min-height: 100vh;
+    background-color: #212121;
+    padding: 2rem;
 }
 
-h1,p{
-  color: white;
+h1 {
+    font-weight: 600;
+    color: white;
 }
 
+.lead {
+    color: white;
+}
+
+.custom-card {
+    background-color: var(--background-light);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    padding: 1.5rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.custom-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 30px rgba(0, 123, 255, 0.3); /* Sombra azul no hover */
+}
+
+.card-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 0.5rem;
+}
+
+.card-text {
+    color: white;
+    font-size: 0.95rem;
+    flex-grow: 1;
+}
+
+.btn-main {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+}
+
+.btn-main:hover {
+    background-color: var(--primary-hover);
+    color: white;
+}
+
+.btn-secondary-custom {
+    background-color: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--primary-color);
+    font-weight: 500;
+    border-radius: 8px;
+    padding: 10px 20px;
+}
+
+.btn-secondary-custom:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
 .btn-primary {
     background-color: #6e0823;
-    border: none;
+    color: white;
     font-weight: bold;
-}
-.btn-secondary {
-    background-color:#0d6efd;
-    border: none;
-    font-weight: bold;
-}
-
-.btn-primary:hover {
-    background-color: #810826;
+    border-radius: 10%;
 }

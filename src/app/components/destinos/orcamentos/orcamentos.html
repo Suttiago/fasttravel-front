@@ -1,64 +1,98 @@
 <div *ngIf="modalAberto" class="modal fade show" tabindex="-1" role="dialog" style="display: block;" aria-labelledby="orcamentosModalLabel" aria-modal="true">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content bg-dark text-white">
-			<div class="modal-header border-bottom border-secondary">
-				<h1 class="modal-title fs-5" id="orcamentosModalLabel">Orçamento</h1>
-				<button type="button" class="btn-close btn-close-white" (click)="fechar()" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-				<div class="container-fluid">
-					<div class="row mb-3">
-						<div class="col-12">
-							<h5>Resumo de preços</h5>
-						</div>
-					</div>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content bg-dark text-white">
+      
+      <!-- Cabeçalho -->
+      <div class="modal-header border-bottom border-secondary">
+        <h1 class="modal-title fs-5" id="orcamentosModalLabel">Orçamento e Pagamento</h1>
+        <button type="button" class="btn-close btn-close-white" (click)="fechar()" aria-label="Close"></button>
+      </div>
+      
+      <!-- Corpo -->
+      <div class="modal-body">
+        <div class="container-fluid">
 
-					<div class="row mb-2">
-						<div class="col-8">
-							<strong>Preço total dos hotéis</strong>
-						</div>
-						<div class="col-4 text-end">
-							{{ precoHoteisDisplay || '-' }}
-						</div>
-					</div>
+          <!-- Resumo -->
+          <div class="row mb-3">
+            <div class="col-12">
+              <h5>Resumo de preços</h5>
+            </div>
+          </div>
 
-					<div class="row mb-4">
-						<div class="col-8">
-							<strong>Preço total das passagens</strong>
-						</div>
-						<div class="col-4 text-end">
-							{{ precoPassagensDisplay || '-' }}
-						</div>
-					</div>
+          <div class="row mb-2">
+            <div class="col-8"><strong>Preço total dos hotéis</strong></div>
+            <div class="col-4 text-end">{{ precoHoteisDisplay || '-' }}</div>
+          </div>
 
-					<div class="row mb-4 border-top pt-3">
-						<div class="col-8">
-							<strong>Total do orçamento</strong>
-						</div>
-						<div class="col-4 text-end">
-							{{ totalOrcamentoDisplay || '-' }}
-						</div>
-					</div>
+          <div class="row mb-4">
+            <div class="col-8"><strong>Preço total das passagens</strong></div>
+            <div class="col-4 text-end">{{ precoPassagensDisplay || '-' }}</div>
+          </div>
 
-					<div class="row">
-						<div class="col-12">
-							<p class="small text-muted">Revise os valores antes de aprovar ou recusar o orçamento.</p>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="modal-footer">
-				<div class="w-100 d-flex justify-content-between">
-					<div>
-						<button class="btn btn-success" (click)="aprovar()">Aprovar orçamento</button>
-					</div>
-					<div>
-						<button class="btn btn-danger" (click)="recusar()">Recusar orçamento</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+          <div class="row mb-4 border-top pt-3">
+            <div class="col-8"><strong>Total do orçamento</strong></div>
+            <div class="col-4 text-end">{{ totalOrcamentoDisplay || '-' }}</div>
+          </div>
+
+          <!-- Forma de pagamento -->
+          <div class="row mb-3 pt-3 border-top">
+            <div class="col-12">
+              <h5>Forma de Pagamento</h5>
+            </div>
+          </div>
+
+          <div class="row mb-4 align-items-center">
+            <!-- Método -->
+            <div class="col-md-6">
+              <label for="metodoPagamento" class="form-label">Selecione uma opção:</label>
+              <select id="metodoPagamento" class="form-select bg-secondary text-white border-secondary"
+                      [(ngModel)]="metodoPagamento"
+                      (ngModelChange)="onMetodoPagamentoChange($event)">
+                <option value="boleto">Boleto Bancário</option>
+                <option value="pix">PIX</option>
+                <option value="credito">Cartão de Crédito</option>
+                <option value="debito">Cartão de Débito</option>
+              </select>
+            </div>
+
+            <!-- Parcelas -->
+            <div *ngIf="metodoPagamento === 'credito'" class="col-md-6 mt-3 mt-md-0">
+              <label for="numeroParcelas" class="form-label">Número de Parcelas:</label>
+              <select id="numeroParcelas" class="form-select bg-secondary text-white border-secondary"
+                      [(ngModel)]="numeroParcelas">
+                <option [ngValue]="8">8 vezes</option>
+                <option [ngValue]="10">10 vezes</option>
+                <option [ngValue]="12">12 vezes</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Alerta de parcelas -->
+          <div *ngIf="metodoPagamento === 'credito'" class="alert alert-info bg-transparent border-info text-info p-2 mt-2 text-center">
+            <strong>Disponível em até 10 parcelas.</strong>
+          </div>
+
+          <!-- Aviso final -->
+          <div class="row mt-4">
+            <div class="col-12 text-center">
+              <strong>Revise os valores antes de aprovar ou recusar o orçamento.</strong>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Rodapé -->
+      <div class="modal-footer">
+        <div class="w-100 d-flex justify-content-between">
+          <button class="btn btn-success" (click)="aprovar()">Aprovar orçamento</button>
+          <button class="btn btn-danger" (click)="recusar()">Recusar orçamento</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </div>
 
+<!-- Fundo escurecido -->
 <div *ngIf="modalAberto" class="modal-backdrop fade show"></div>

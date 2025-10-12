@@ -1,0 +1,32 @@
+.page-container {
+    display: flex;
+    flex-direction: column; /* Para empilhar título/botão e card */
+    justify-content: center; /* Alinha ao topo */
+    align-items: center;
+    min-height: 100vh;
+    background-color: #212121;
+    padding: 2rem;
+}
+
+.table-responsive{
+    max-height: 400px; 
+    overflow-y: auto;
+}
+
+#container-body {
+    width: 100%;
+    max-width: 1500px;
+}
+
+.card { 
+    background-color: #2b2b2b;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    color: #f0f0f0;
+}
+
+.card-title {
+    color: #f0f0f0;
+    font-size: 2rem;
+}
+

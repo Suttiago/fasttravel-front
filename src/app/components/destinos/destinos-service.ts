@@ -60,10 +60,35 @@ export class DestinosService {
   }
   
   aceitarDestino(destino_id: any): Observable<any> {
-    return this.httpCliente.put<any>(`http://localhost:5001/AceitarDest/${destino_id}`, {});
+    return this.httpCliente.put<any>(`${this.urlUsuario}/AceitarDest/${destino_id}`, {});
   }
 
   recusarDestino(destino_id: any): Observable<any> {
-    return this.httpCliente.put<any>(`http://localhost:5001/RecusarDest/${destino_id}`, {});
+    return this.httpCliente.put<any>(`${this.urlUsuario}/RecusarDest/${destino_id}`, {});
   }
+
+  gerarOrcamento(destino_id: any, status?: string): Observable<any> {
+    const body: any = {};
+    if (status) {
+      body.status = status;
+    }
+    return this.httpCliente.post<any>(`http://localhost:5001/Orcamento/GerarOrcamento/${destino_id}`, body);
+  }
+
+  editarOrcamento(orcamento_id: any, payload: any): Observable<any> {
+    return this.httpCliente.put<any>(`http://localhost:5001/Orcamento/Editar/${orcamento_id}`, payload);
+  }
+
+  ListarOrcamentos(): Observable<any[]> {
+    return this.httpCliente.get<any[]>(`http://localhost:5001/Orcamento/Listar`);
+  }
+
+  ListarOrcamentosPorDestino(destino_id: any): Observable<any[]> {
+    return this.httpCliente.get<any[]>(`http://localhost:5001/Orcamento/ListarPorDestino/${destino_id}`);
+  }
+
+  GerarContaPagar(ContaPagar: any): Observable<any[]>{
+    return this.httpCliente.post<any>(`http://localhost:5001/Contas/CadastrarContas`,ContaPagar)
+  }
+  
 }

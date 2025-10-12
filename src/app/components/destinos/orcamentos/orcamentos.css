@@ -1,0 +1,115 @@
+.page-container {
+    display: flex;
+    flex-direction: column; /* Para empilhar título/botão e card */
+    justify-content: center; /* Alinha ao topo */
+    align-items: center;
+    min-height: 100vh;
+    background-color: #212121;
+    padding: 2rem;
+}
+
+.table-responsive{
+    max-height: 400px; 
+    overflow-y: auto;
+}
+
+#container-body {
+    width: 100%;
+    max-width: 1500px;
+}
+
+.card { 
+    background-color: #2b2b2b;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    color: #f0f0f0;
+}
+
+.card-title {
+    color: #f0f0f0;
+    font-size: 2rem;
+}
+
+
+
+/* Estilos para o Modal */
+.modal-content.custom-modal-content {
+    background-color: #2b2b2b; /* Fundo escuro do modal */
+    color: #f0f0f0; /* Cor do texto dentro do modal */
+    border: none; /* Sem borda */
+    border-radius: 8px; /* Bordas arredondadas */
+}
+
+.modal-header.custom-modal-header {
+    border-bottom: 1px solid #444; /* Linha divisória mais suave */
+    padding: 1.5rem; /* Espaçamento interno */
+}
+
+.modal-header.custom-modal-header .modal-title {
+    color: #f0f0f0; /* Cor do título */
+    font-size: 1.5rem; /* Tamanho da fonte do título */
+    font-weight: bold;
+}
+
+.btn-close.custom-btn-close {
+    filter: invert(1); /* Inverte a cor do ícone "x" para branco */
+    opacity: 0.8; /* Um pouco de transparência */
+}
+
+.btn-close.custom-btn-close:hover {
+    opacity: 1;
+}
+
+.modal-body.custom-modal-body {
+    padding: 1.5rem; /* Espaçamento interno */
+}
+
+.form-label {
+    color: #f0f0f0; /* Cor dos labels */
+    margin-bottom: 0.5rem;
+}
+
+.form-control.custom-form-control,
+.form-select.custom-form-control {
+    background-color: #3a3a3a; /* Fundo dos inputs */
+    color: #f0f0f0; /* Cor do texto dos inputs */
+    border: 1px solid #444; /* Borda sutil */
+    border-radius: 5px; /* Bordas arredondadas */
+    padding: 0.75rem 1rem; /* Padding interno */
+}
+
+.form-control.custom-form-control:focus,
+.form-select.custom-form-control:focus {
+    background-color: #444444; /* Cor de fundo ao focar */
+    border-color: #0b5ed7; /* Borda azul ao focar (ou sua cor de destaque) */
+    box-shadow: 0 0 0 0.25rem rgba(11, 94, 215, 0.25); /* Sombra azul ao focar */
+}
+
+.modal-footer.custom-modal-footer {
+    border-top: 1px solid #444; /* Linha divisória mais suave */
+    padding: 1.5rem; /* Espaçamento interno */
+    justify-content: flex-end; /* Alinha os botões à direita */
+}
+
+/* Botões do Footer */
+.btn-danger.custom-btn-cancel {
+    background-color: #dc3545; /* Vermelho */
+    border-color: #dc3545;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 5px;
+}
+
+.btn-danger.custom-btn-cancel:hover {
+    background-color: #c82333;
+    border-color: #c82333;
+}
+
+p{
+    color: aliceblue;
+}
+
+
+.modal-header{
+    background-color: #6e0823;
+}

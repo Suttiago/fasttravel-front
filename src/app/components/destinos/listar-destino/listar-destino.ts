@@ -16,6 +16,7 @@ import { Orcamentos } from '../orcamentos/orcamentos';
 @Component({
   selector: 'app-listar-destino',
   imports: [ TableModule,
+    TableModule,
     ButtonModule,
     CommonModule,
     CadastroDestino,
@@ -44,7 +45,9 @@ export class ListarDestino {
   totalHoteis: number | null = null;
   totalPassagens: number | null = null;
   totalOrcamento: number | null = null;
-
+  orcamentoAtual: any = null;
+  metodoPagamento: string = 'Boleto'; // Valor padrão
+  numeroParcelas: number = 1; 
   hoteis:any[] = []
   hoteisSalvos: any[] = []
   carregandoHoteisSalvos = false;
@@ -104,17 +107,67 @@ export class ListarDestino {
     }, 0);
     this.totalPassagens = (somaPassagens === 0) ? null : somaPassagens;
     this.totalOrcamento = (this.totalHoteis || 0) + (this.totalPassagens || 0);
+    // Apenas abre o modal com os valores calculados localmente.
+    // A geração/persistência do orçamento será feita quando o usuário aprovar ou recusar.
+    this.orcamentoAtual = null;
     this.modalOrcamentosAberto = true;
-    console.log('modalOrcamentosAberto set to true');
+    this.detectorMudanca.detectChanges();
   }
 
-  onAprovarOrcamento(): void {
+
+  onMetodoPagamentoChange(novoMetodo: string): void {
+    if (novoMetodo === 'credito') {
+      // Se for cartão de crédito, define o valor padrão de parcelas como 8.
+      this.numeroParcelas = 8;
+    } else {
+      // Para qualquer outra opção (Boleto, PIX, etc.), as parcelas são sempre 1.
+      this.numeroParcelas = 1;
+    }
+  }
+  onAprovarOrcamento(payload: any): void {
     if (!this.destinoSelecionado) return;
-    this.destinoteService.aceitarDestino(this.destinoSelecionado.id).subscribe({
+    const destinoId = this.destinoSelecionado.id;
+
+      this.metodoPagamento = payload.metodoPagamento;
+      this.numeroParcelas = payload.numeroParcelas;
+
+    const gerarOuEditar = (orcamento: any | null) => {
+      if (orcamento && orcamento.id) {
+        return this.destinoteService.editarOrcamento(orcamento.id, { status: 'Pagamento pendente' });
+      }
+      return this.destinoteService.gerarOrcamento(destinoId, 'Aceito');
+    };
+
+    this.destinoteService.aceitarDestino(destinoId).subscribe({
       next: () => {
-        alert('Destino aceito com sucesso');
-        this.modalOrcamentosAberto = false;
-        this.carregarDestinos();
+        gerarOuEditar(this.orcamentoAtual).subscribe({
+          next: (orcamentoCriado) => {
+
+            const novaContaPagar ={
+              valor_total: this.totalOrcamento,
+              metodo_pagamento: this.metodoPagamento,
+              numero_parcelas: this.numeroParcelas,
+              orcamento_id: orcamentoCriado.orcamento.id
+            }
+            this.destinoteService.GerarContaPagar(novaContaPagar).subscribe({
+              next:(contaGerada)=>{
+                alert('Destino, orçamento e contas a pagar aceito')
+                this.modalOrcamentosAberto = false;
+                this.carregarDestinos();
+              },
+              error:(errConta)=>{
+                console.error('Erro ao gerar conta a pagar:', errConta);
+                alert('Orçamento aceito, mas falha ao gerar a conta a pagar.');
+              }
+            })
+          },
+          error: (err) => {
+            console.error('Erro ao criar/atualizar orçamento (aceitar):', err);
+            alert('Destino aceito, mas falha ao criar/atualizar orçamento');
+            this.modalOrcamentosAberto = false;
+            this.carregarDestinos();
+          }
+        });
       },
       error: (err) => {
         console.error('Erro ao aceitar destino:', err);
@@ -125,11 +178,29 @@ export class ListarDestino {
 
   onRecusarOrcamento(): void {
     if (!this.destinoSelecionado) return;
-    this.destinoteService.recusarDestino(this.destinoSelecionado.id).subscribe({
+    const destinoId = this.destinoSelecionado.id;
+    const gerarOuEditar = (orcamento: any | null) => {
+      if (orcamento && orcamento.id) {
+        return this.destinoteService.editarOrcamento(orcamento.id, { status: 'Recusado' });
+      }
+      return this.destinoteService.gerarOrcamento(destinoId, 'Recusado');
+    };
+
+    this.destinoteService.recusarDestino(destinoId).subscribe({
       next: () => {
-        alert('Destino recusado com sucesso');
-        this.modalOrcamentosAberto = false;
-        this.carregarDestinos();
+        gerarOuEditar(this.orcamentoAtual).subscribe({
+          next: (res) => {
+            alert('Destino e orçamento recusados com sucesso');
+            this.modalOrcamentosAberto = false;
+            this.carregarDestinos();
+          },
+          error: (err) => {
+            console.error('Erro ao criar/atualizar orçamento (recusar):', err);
+            alert('Destino recusado, mas falha ao criar/atualizar orçamento');
+            this.modalOrcamentosAberto = false;
+            this.carregarDestinos();
+          }
+        });
       },
       error: (err) => {
         console.error('Erro ao recusar destino:', err);
@@ -166,24 +237,24 @@ carregarDestinos(): void {
             destino.hoteis = hoteis; 
             this.detectorMudanca.detectChanges();
           },
-          error: err => {
-            console.error(`Erro ao buscar hotéis do destino ${destino.id}:`, err);
-          }
+            error: (err: any) => {
+              console.error(`Erro ao buscar hotéis do destino ${destino.id}:`, err);
+            }
         });
         this.destinoteService.ListarPassagemsDestino(destino.id).subscribe({
           next: (passagens: any[]) => {
             destino.passagens = passagens;
             this.detectorMudanca.detectChanges();
-          },
-          error: err => {
-            console.error(`Erro ao buscar passagens do destino ${destino.id}:`, err);
-          }
+            },
+            error: (err: any) => {
+              console.error(`Erro ao buscar passagens do destino ${destino.id}:`, err);
+            }
         });
       });
 
       this.detectorMudanca.detectChanges();
     },
-    error: error => {
+    error: (error: any) => {
       console.log('erro ao buscar destinos', error);
     }
   });
