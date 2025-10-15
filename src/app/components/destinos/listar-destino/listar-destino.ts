@@ -95,24 +95,43 @@ export class ListarDestino {
   this.buscarPassagens(destino.id);
   }
 
-  abrirModalOrcamentos(destino: any): void {
-    console.log('abrirModalOrcamentos chamado para destino:', destino);
-    this.destinoSelecionado = destino;
-    // calcula total de hoteis e menor passagem
-    const total = (destino.hoteis || []).reduce((s: number, h: any) => s + (h.hotel_price || h.hotel_price === 0 ? Number(h.hotel_price) : 0), 0);
-    this.totalHoteis = total || null;
-    const somaPassagens = (destino.passagens || []).reduce((s: number, p: any) => {
-      const val = p.preco_passagem ?? p.price ?? 0;
-      return s + (typeof val === 'number' ? val : parseFloat(val) || 0);
-    }, 0);
-    this.totalPassagens = (somaPassagens === 0) ? null : somaPassagens;
-    this.totalOrcamento = (this.totalHoteis || 0) + (this.totalPassagens || 0);
-    // Apenas abre o modal com os valores calculados localmente.
-    // A geração/persistência do orçamento será feita quando o usuário aprovar ou recusar.
-    this.orcamentoAtual = null;
-    this.modalOrcamentosAberto = true;
-    this.detectorMudanca.detectChanges();
-  }
+abrirModalOrcamentos(destino: any): void {
+  console.log('abrirModalOrcamentos chamado para destino:', destino);
+  this.destinoSelecionado = destino;
+
+  // Calcula o total dos hotéis (sem alteração)
+  const totalHoteis = (destino.hoteis || []).reduce((s: number, h: any) => s + (Number(h.hotel_price) || 0), 0);
+  this.totalHoteis = totalHoteis || null;
+
+  // --- LÓGICA ATUALIZADA PARA PASSAGENS ---
+
+  // 1. Calcula o número total de pessoas
+  // Se adultos ou crianças não forem definidos, considera 0.
+  // Se a soma for 0, usa 1 para não zerar o custo da passagem.
+  const numeroAdultos = Number(destino.adultos) || 0;
+  const numeroCriancas = Number(destino.criancas) || 0;
+  const totalPessoas = (numeroAdultos + numeroCriancas) > 0 ? (numeroAdultos + numeroCriancas) : 1;
+
+  // 2. Soma o preço base de todas as passagens
+  const somaBasePassagens = (destino.passagens || []).reduce((s: number, p: any) => {
+    const val = p.preco_passagem ?? p.price ?? 0;
+    return s + (Number(val) || 0);
+  }, 0);
+
+  // 3. Multiplica o valor base pelo total de pessoas
+  const custoTotalPassagens = somaBasePassagens * totalPessoas;
+  this.totalPassagens = (custoTotalPassagens === 0) ? null : custoTotalPassagens;
+  
+  // --- FIM DA LÓGICA ATUALIZADA ---
+
+  // O orçamento total agora refletirá o novo cálculo das passagens
+  this.totalOrcamento = (this.totalHoteis || 0) + (this.totalPassagens || 0);
+  
+  // Restante da função
+  this.orcamentoAtual = null;
+  this.modalOrcamentosAberto = true;
+  this.detectorMudanca.detectChanges();
+}
 
 
   onMetodoPagamentoChange(novoMetodo: string): void {

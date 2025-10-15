@@ -24,9 +24,5 @@ export const routes: Routes = [
             import('./components/destinos/destinos.routes').then(m=>m.DESTINO_ROUTES)
 
     }
-    ,
-    {
-        path: 'financeiro',
-        loadChildren: () => import('./components/financeiro/financeiro.routes').then(m => m.FINANCEIRO_ROUTES)
-    }
+    
 ];

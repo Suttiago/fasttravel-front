@@ -1,0 +1,44 @@
+<!-- Fundo escuro do modal -->
+<div *ngIf="modalAberto" class="modal-backdrop fade show"></div>
+
+<!-- Conteúdo do Modal -->
+<div *ngIf="modalAberto" class="modal fade show" tabindex="-1" style="display: block;">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark text-white">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title">Registrar Plano de Pagamento</h5>
+        <button type="button" class="btn-close btn-close-white" (click)="onFechar()"></button>
+      </div>
+      <div class="modal-body">
+        <p class="text-white-50">Você está criando um plano para a conta a pagar ID #{{ conta?.id }}.</p>
+        
+        <!-- Informações da Conta -->
+        <div class="mb-3">
+          <div class="d-flex justify-content-between">
+            <span>Valor da Conta:</span>
+            <strong>{{ conta?.valor | currency:'BRL' }}</strong>
+          </div>
+          <div class="d-flex justify-content-between">
+            <span>Vencimento:</span>
+            <strong>{{ conta?.dt_vencimento | date:'dd/MM/yyyy' }}</strong>
+          </div>
+        </div>
+
+        <!-- Formulário -->
+        <div class="mb-3">
+          <label for="instituicao" class="form-label">Instituição de Pagamento (Banco)</label>
+          <input type="text" id="instituicao" class="form-control bg-secondary text-white border-secondary" [(ngModel)]="instituicaoPagamento" placeholder="Ex: Banco do Brasil">
+        </div>
+        <div class="mb-3">
+          <label for="contaBancaria" class="form-label">Conta Bancária</label>
+          <input type="text" id="contaBancaria" class="form-control bg-secondary text-white border-secondary" [(ngModel)]="contaBancaria" placeholder="Ex: Ag 1234 / CC 56789-0">
+        </div>
+
+      </div>
+      <div class="modal-footer border-secondary">
+        <button type="button" class="btn btn-secondary" (click)="onFechar()">Cancelar</button>
+        <button type="button" class="btn btn-primary" (click)="onSalvar()">Salvar Plano</button>
+      </div>
+    </div>
+  </div>
+</div>
