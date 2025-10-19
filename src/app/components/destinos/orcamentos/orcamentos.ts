@@ -61,10 +61,14 @@ export class Orcamentos implements OnInit {
     }
   }
 
-  // --- GETTERS PARA FORMATAÇÃO DE VALORES (usados no modo modal) ---
 
   get precoHoteisDisplay(): string {
-    return this.precoHoteis?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) ?? '-';
+    return this.precoHoteis?.toLocaleString('pt-BR', { 
+      style: 'currency', 
+      currency: 'BRL',
+      minimumFractionDigits: 2, // Garante 2 casas decimais
+      maximumFractionDigits: 2  // Evita arredondamento
+    }) ?? '-';
   }
 
   get precoPassagensDisplay(): string {
@@ -120,7 +124,7 @@ export class Orcamentos implements OnInit {
       concatMap(() => this.destinosService.editarOrcamento(o.id, { status: 'Pagamento Pendente' }))
     ).subscribe({
       next: () => {
-        alert('Orçamento aprovado com sucesso');
+        alert('Orçamento aprovado com sucesso');                   
         this.carregarOrcamentos(); // Atualiza a lista
       },
       error: (err) => {

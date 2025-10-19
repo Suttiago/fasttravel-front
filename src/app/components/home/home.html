@@ -5,17 +5,18 @@
     </div>
 
     <div class="row justify-content-center g-4 mt-4">
+        <!-- Card de Destinos -->
         <div class="col-md-4">
             <div class="custom-card">
                 <div class="card-body">
                     <h5 class="card-title">Destinos</h5>
                     <p class="card-text">Planeje e gerencie suas próximas viagens.</p>
-                    <button class="btn-primary">
-                      <a routerLink="/destinos/listar" class="btn btn-main">Ver Destinos</a>
-                    </button>
+                    <a routerLink="/destinos/listar" class="btn btn-main">Ver Destinos</a>
                 </div>
             </div>
         </div>
+
+        <!-- Card de Dependentes -->
         <div class="col-md-4">
             <div class="custom-card">
                 <div class="card-body">
@@ -25,6 +26,8 @@
                 </div>
             </div>
         </div>
+
+        <!-- Card de Financeiro -->
         <div class="col-md-4">
             <div class="custom-card">
                 <div class="card-body">
@@ -32,8 +35,29 @@
                     <p class="card-text">Acompanhe orçamentos e despesas.</p>
                     <div class="d-grid gap-2">
                         <a routerLink="/destinos/orcamentos" class="btn btn-main">Orçamentos</a>
-                        <a routerLink="/financeiro/contas-pagar" class="btn btn-main">Contas a Pagar</a>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NOVO CARD PARA RELATÓRIO -->
+        <div class="col-md-4">
+            <div class="custom-card card-relatorio">
+                <div class="card-body">
+                    <h5 class="card-title">Relatório Geral</h5>
+                    <p class="card-text">Exporte um resumo financeiro completo.</p>
+                    <button class="btn btn-success" (click)="exportarPDF()" [disabled]="exportandoPDF">
+                        <span>
+                            <i class="fas fa-file-pdf me-2"></i>Gerar Relatório Financeiro
+                        </span>
+                    </button>
+                    <br>
+                    <br>
+                    <button class="btn btn-success" (click)="exportarPDFDestino()">
+                        <span>
+                            <i class="fas fa-file-pdf me-2"></i>Gerar Relatório Destino 
+                        </span>
+                    </button>
                 </div>
             </div>
         </div>

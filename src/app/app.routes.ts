@@ -24,5 +24,7 @@ export const routes: Routes = [
             import('./components/destinos/destinos.routes').then(m=>m.DESTINO_ROUTES)
 
     }
+
+    
     
 ];

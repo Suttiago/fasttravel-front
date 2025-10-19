@@ -145,8 +145,7 @@ abrirModalOrcamentos(destino: any): void {
   }
   onAprovarOrcamento(payload: any): void {
     if (!this.destinoSelecionado) return;
-    const destinoId = this.destinoSelecionado.id;
-
+    const destino_id = this.destinoSelecionado.id;
       this.metodoPagamento = payload.metodoPagamento;
       this.numeroParcelas = payload.numeroParcelas;
 
@@ -154,10 +153,10 @@ abrirModalOrcamentos(destino: any): void {
       if (orcamento && orcamento.id) {
         return this.destinoteService.editarOrcamento(orcamento.id, { status: 'Pagamento pendente' });
       }
-      return this.destinoteService.gerarOrcamento(destinoId, 'Aceito');
+      return this.destinoteService.gerarOrcamento(destino_id, 'Aceito');
     };
 
-    this.destinoteService.aceitarDestino(destinoId).subscribe({
+    this.destinoteService.aceitarDestino(destino_id).subscribe({
       next: () => {
         gerarOuEditar(this.orcamentoAtual).subscribe({
           next: (orcamentoCriado) => {
@@ -360,6 +359,7 @@ carregarDestinos(): void {
       next:(res)=>{
         alert('Hotel salvo com sucesso');
         console.log('Hotel salvo', res)
+        this.carregarDestinos()
       },
       error:(err)=>{
         console.error('Erro ao salvar hotel:', err);
@@ -418,6 +418,7 @@ buscarPassagens(id: any): void {
                 next: (res) => {
                   alert('Passagem salva com sucesso!');
                   console.log('Passagem salva:', res);
+                  this.carregarDestinos()
                 },
                 error: (err) => {
                   console.error('Erro ao salvar passagem:', err);

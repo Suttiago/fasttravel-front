@@ -67,12 +67,12 @@ export class DestinosService {
     return this.httpCliente.put<any>(`${this.urlUsuario}/RecusarDest/${destino_id}`, {});
   }
 
-  gerarOrcamento(destino_id: any, status?: string): Observable<any> {
+  gerarOrcamento(destino: any, status?: string): Observable<any> {
     const body: any = {};
     if (status) {
       body.status = status;
     }
-    return this.httpCliente.post<any>(`http://localhost:5001/Orcamento/GerarOrcamento/${destino_id}`, body);
+    return this.httpCliente.post<any>(`http://localhost:5001/Orcamento/GerarOrcamento/${destino}`, body);
   }
 
   editarOrcamento(orcamento_id: any, payload: any): Observable<any> {
@@ -98,5 +98,16 @@ export class DestinosService {
   GerarPlanoPagamento(PlanoPagamento: any): Observable<any[]>{
     return this.httpCliente.post<any>(`http://localhost:5001/Plano/Criar`,PlanoPagamento)
   }
+
+  EditarStatusConta(conta_id: any):Observable<any[]>{
+    return this.httpCliente.put<any>(`http://localhost:5001/Contas/Listar${conta_id}`, {});
+  }
   
+  getRelatorioFinanceiroPDF(): Observable<{ pdf_base64: string }> {
+    return this.httpCliente.get<{ pdf_base64: string }>(`http://localhost:5001/Relatorio/Financeiro`);
+  }
+
+  getRelatorioDestinoPDF(): Observable<{ pdf_base64: string }> {
+    return this.httpCliente.get<{ pdf_base64: string }>(`http://localhost:5001/Relatorio/Destino`);
+  }
 }

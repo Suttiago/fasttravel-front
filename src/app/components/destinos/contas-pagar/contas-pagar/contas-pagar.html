@@ -6,39 +6,95 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content bg-dark text-white">
       <div class="modal-header border-secondary">
-        <h5 class="modal-title">Registrar Plano de Pagamento</h5>
+        <h5 class="modal-title">Registar Pagamento</h5>
         <button type="button" class="btn-close btn-close-white" (click)="onFechar()"></button>
       </div>
       <div class="modal-body">
-        <p class="text-white-50">Você está criando um plano para a conta a pagar ID #{{ conta?.id }}.</p>
         
-        <!-- Informações da Conta -->
-        <div class="mb-3">
+        <!-- Template reutilizável para o formulário de cartão -->
+        <ng-template #cardForm>
+          <h6 class="mb-3">Dados do Cartão</h6>
+          <div class="mb-3">
+            <label for="numeroCartao" class="form-label">Número do Cartão</label>
+            <input type="text" id="numeroCartao" class="form-control bg-secondary text-white border-secondary" [(ngModel)]="numeroCartao" placeholder="0000 0000 0000 0000">
+          </div>
+          <div class="mb-3">
+            <label for="nomeTitular" class="form-label">Nome do Titular</label>
+            <input type="text" id="nomeTitular" class="form-control bg-secondary text-white border-secondary" [(ngModel)]="nomeTitular" placeholder="Como impresso no cartão">
+          </div>
+          <div class="row">
+            <div class="col-7">
+              <label for="validade" class="form-label">Validade (MM/AA)</label>
+              <input type="text" id="validade" class="form-control bg-secondary text-white border-secondary" [(ngModel)]="dtValidadeCartao" placeholder="MM/AA">
+            </div>
+            <div class="col-5">
+              <label for="cvv" class="form-label">CVV</label>
+              <input type="text" id="cvv" class="form-control bg-secondary text-white border-secondary" [(ngModel)]="cvv" placeholder="123">
+            </div>
+          </div>
+        </ng-template>
+
+        <!-- Informações Resumo da Conta -->
+        <div class="mb-4 p-3 bg-secondary rounded">
+            <div class="d-flex justify-content-between">
+              <span class="text-white-50">Método de Pagamento:</span>
+              <strong class="text-capitalize">{{ conta?.metodo_pagamento }}</strong>
+            </div>
           <div class="d-flex justify-content-between">
-            <span>Valor da Conta:</span>
+            <span class="text-white-50">Valor da Conta:</span>
             <strong>{{ conta?.valor | currency:'BRL' }}</strong>
           </div>
           <div class="d-flex justify-content-between">
-            <span>Vencimento:</span>
+            <span class="text-white-50">Vencimento:</span>
             <strong>{{ conta?.dt_vencimento | date:'dd/MM/yyyy' }}</strong>
           </div>
         </div>
 
-        <!-- Formulário -->
-        <div class="mb-3">
-          <label for="instituicao" class="form-label">Instituição de Pagamento (Banco)</label>
-          <input type="text" id="instituicao" class="form-control bg-secondary text-white border-secondary" [(ngModel)]="instituicaoPagamento" placeholder="Ex: Banco do Brasil">
-        </div>
-        <div class="mb-3">
-          <label for="contaBancaria" class="form-label">Conta Bancária</label>
-          <input type="text" id="contaBancaria" class="form-control bg-secondary text-white border-secondary" [(ngModel)]="contaBancaria" placeholder="Ex: Ag 1234 / CC 56789-0">
+        <!-- Container para os formulários dinâmicos -->
+        <div [ngSwitch]="conta?.metodo_pagamento">
+
+          <!-- === CASO 1: Cartão de Crédito ou Débito (CORRIGIDO) === -->
+          <ng-container *ngSwitchCase="'credito'">
+            <ng-container *ngTemplateOutlet="cardForm"></ng-container>
+          </ng-container>
+          <ng-container *ngSwitchCase="'debito'">
+            <ng-container *ngTemplateOutlet="cardForm"></ng-container>
+          </ng-container>
+
+          <!-- === CASO 2: PIX === -->
+          <div *ngSwitchCase="'pix'">
+            <h6 class="mb-3 text-center">Pagar com PIX</h6>
+            <p class="text-center text-white-50">Aponte a câmara para o QR Code ou copie o código abaixo.</p>
+            <div class="text-center bg-white p-2 rounded d-inline-block mx-auto d-block" style="max-width: 216px;">
+              <img [src]="pixQRCodeUrl" alt="QR Code PIX" width="200" height="200">
+            </div>
+             <div class="input-group mt-3">
+              <input type="text" class="form-control bg-secondary text-white border-secondary" value="00020126... (código pix copia e cola)" readonly>
+              <button class="btn btn-outline-secondary" type="button" (click)="copiarTexto('00020126...')">Copiar</button>
+            </div>
+          </div>
+
+          <!-- === CASO 3: Boleto === -->
+          <div *ngSwitchCase="'boleto'">
+            <h6 class="mb-3">Pagamento por Boleto</h6>
+            <p class="text-white-50">Copie o código de barras abaixo para pagar no seu banco.</p>
+            <div class="input-group">
+              <input type="text" class="form-control bg-secondary text-white border-secondary" [value]="boletoBarcode" readonly>
+              <button class="btn btn-outline-secondary" type="button" (click)="copiarTexto(boletoBarcode)">
+                <i class="fas fa-copy me-1"></i> Copiar
+              </button>
+            </div>
+            <p class="text-center mt-3"><a href="#" class="link-light">Visualizar e imprimir boleto</a></p>
+          </div>
+
         </div>
 
       </div>
       <div class="modal-footer border-secondary">
-        <button type="button" class="btn btn-secondary" (click)="onFechar()">Cancelar</button>
-        <button type="button" class="btn btn-primary" (click)="onSalvar()">Salvar Plano</button>
+          <button type="button" class="btn btn-primary" (click)="onSalvar()">Confirmar Pagamento</button>
+        <button type="button" class="btn btn-danger" (click)="onFechar()">Cancelar</button>
       </div>
     </div>
   </div>
 </div>
+

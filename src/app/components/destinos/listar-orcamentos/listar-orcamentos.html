@@ -20,43 +20,27 @@
             <ng-container *ngFor="let o of orcamentos">
               <tr class="orcamento-row">
                 <td>
-                  <button
-                    class="btn btn-sm btn-outline-secondary"
-                    (click)="toggleContas(o)"
-                    aria-label="Mostrar detalhes"
-                  >
-                    <i
-                      class="fas"
-                      [ngClass]="{
-                        'fa-chevron-down': orcamentoExpandido !== o,
-                        'fa-chevron-up': orcamentoExpandido === o
-                      }"
-                    ></i>
+                  <button class="btn btn-sm btn-outline-secondary" (click)="toggleContas(o)" aria-label="Mostrar detalhes">
+                    <i class="fas" [ngClass]="{'fa-chevron-down': orcamentoExpandido !== o, 'fa-chevron-up': orcamentoExpandido === o}"></i>
                   </button>
                 </td>
                 <td>#{{ o.id }}</td>
                 <td>{{ o.destino_id }}</td>
                 <td>{{ o.valor_total | currency: 'BRL' }}</td>
                 <td>
-                  <span
-                    class="badge"
-                    [ngClass]="{
-                      'bg-success': o.status === 'Pagamento Feito',
-                      'bg-warning text-dark': o.status === 'Pagamento Pendente',
-                      'bg-danger': o.status === 'Recusado'
-                    }"
-                  >
+                  <span class="badge" [ngClass]="{
+                    'bg-success': o.status === 'Pagamento Feito',
+                    'bg-warning text-dark': o.status === 'Pagamento Pendente',
+                    'bg-danger': o.status === 'Recusado'
+                  }">
                     {{ o.status }}
                   </span>
                 </td>
               </tr>
 
-              <tr *ngIf="orcamentoExpandido === o">
-                <td colspan="6" class="p-0">
-                  <div
-                    class="detail-container p-3 bg-dark rounded-bottom"
-                    @animate.enter
-                  >
+              <tr class="detail-row" *ngIf="orcamentoExpandido === o">
+                <td colspan="6" class="p-0" [@detailExpand]>
+                  <div class="detail-container p-3">
                     <div *ngIf="o.carregandoContas" class="text-center text-muted py-3">
                       <p>A carregar contas...</p>
                     </div>
@@ -66,24 +50,29 @@
                       <table class="table table-sm table-dark table-borderless text-white-50">
                         <thead>
                           <tr>
-                            <th>ID da Conta</th>
                             <th>Valor</th>
                             <th>Vencimento</th>
                             <th>Método</th>
                             <th>Status</th>
-                            <th>Ações</th>
+                            <th class="text-center">Ações da Conta</th>
                           </tr>
                         </thead>
                         <tbody>
                           <tr *ngFor="let conta of o.contas">
-                            <td>{{ conta.id }}</td>
                             <td>{{ conta.valor | currency: 'BRL' }}</td>
                             <td>{{ conta.dt_vencimento | date: 'dd/MM/yyyy' }}</td>
                             <td>{{ conta.metodo_pagamento }}</td>
-                            <td>{{ conta.status }}</td>
                             <td>
-                              <button class="btn btn-success btn-sm">
-                                <i class="fa-solid fa-money-bill"></i>
+                              <span class="badge" [ngClass]="{
+                                'bg-success': conta.status === 'Pago',
+                                'bg-warning text-dark': conta.status === 'Pendente'
+                              }">
+                                {{ conta.status }}
+                              </span>
+                            </td>
+                            <td class="text-center">
+                              <button class="btn btn-primary btn-sm" (click)="abrirModalPlano(conta)" title="Registar Pagamento">
+                                <i class="fas fa-file-invoice-dollar"></i>
                               </button>
                             </td>
                           </tr>
@@ -91,10 +80,7 @@
                       </table>
                     </div>
 
-                    <div
-                      *ngIf="!o.carregandoContas && (!o.contas || o.contas.length === 0)"
-                      class="text-center text-muted py-3"
-                    >
+                    <div *ngIf="!o.carregandoContas && (!o.contas || o.contas.length === 0)" class="text-center text-muted py-3">
                       <p>Nenhuma conta a pagar encontrada para este orçamento.</p>
                     </div>
                   </div>
@@ -113,3 +99,11 @@
     </div>
   </div>
 </div>
+
+<app-contas-pagar
+  [modalAberto]="modalPlanoAberto"
+  [conta]="contaSelecionada"
+  (fechar)="fecharModalPlano()"
+  (salvar)="salvarPlanoPagamento($event)"
+></app-contas-pagar>
+
