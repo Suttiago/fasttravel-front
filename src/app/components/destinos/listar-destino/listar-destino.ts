@@ -11,12 +11,12 @@ import { CadastroDestino } from '../cadastro-destino/cadastro-destino';
 import { DestinosService } from '../destinos-service';
 import { Hoteis } from '../hoteis/hoteis';
 import { Passagens } from '../passagens/passagens';
-import { Orcamentos } from '../orcamentos/orcamentos';
+import { Orcamentos, AprovacaoPayload } from '../orcamentos/orcamentos';
+import { concatMap } from 'rxjs';
 
 @Component({
   selector: 'app-listar-destino',
   imports: [ TableModule,
-    TableModule,
     ButtonModule,
     CommonModule,
     CadastroDestino,
@@ -25,8 +25,7 @@ import { Orcamentos } from '../orcamentos/orcamentos';
   InputTextModule,
   Hoteis,
   Passagens,
-  Orcamentos],
-  
+Orcamentos],
   templateUrl: './listar-destino.html',
   styleUrl: './listar-destino.css'
 })
@@ -40,14 +39,6 @@ export class ListarDestino {
   modalHoteisAberto = false;
   modalPassagensAberto = false;
 
-  // Orçamentos
-  modalOrcamentosAberto = false;
-  totalHoteis: number | null = null;
-  totalPassagens: number | null = null;
-  totalOrcamento: number | null = null;
-  orcamentoAtual: any = null;
-  metodoPagamento: string = 'Boleto'; // Valor padrão
-  numeroParcelas: number = 1; 
   hoteis:any[] = []
   hoteisSalvos: any[] = []
   carregandoHoteisSalvos = false;
@@ -58,6 +49,12 @@ export class ListarDestino {
   carregandoPassagensSalvas = false;
   carregandoPassagens = false
 
+  modalOrcamentosAberto = false;
+  totalHoteis: number | null = null;
+  totalPassagens: number | null = null;
+  totalOrcamento: number | null = null;
+  orcamentoAtual: any = null; // Para rastrear se um orçamento já existe
+  
   abrirModal(): void {
     this.modalAberto = true;
   }
@@ -95,144 +92,42 @@ export class ListarDestino {
   this.buscarPassagens(destino.id);
   }
 
-abrirModalOrcamentos(destino: any): void {
-  console.log('abrirModalOrcamentos chamado para destino:', destino);
-  this.destinoSelecionado = destino;
-
-  // Calcula o total dos hotéis (sem alteração)
-  const totalHoteis = (destino.hoteis || []).reduce((s: number, h: any) => s + (Number(h.hotel_price) || 0), 0);
-  this.totalHoteis = totalHoteis || null;
-
-  // --- LÓGICA ATUALIZADA PARA PASSAGENS ---
-
-  // 1. Calcula o número total de pessoas
-  // Se adultos ou crianças não forem definidos, considera 0.
-  // Se a soma for 0, usa 1 para não zerar o custo da passagem.
-  const numeroAdultos = Number(destino.adultos) || 0;
-  const numeroCriancas = Number(destino.criancas) || 0;
-  const totalPessoas = (numeroAdultos + numeroCriancas) > 0 ? (numeroAdultos + numeroCriancas) : 1;
-
-  // 2. Soma o preço base de todas as passagens
-  const somaBasePassagens = (destino.passagens || []).reduce((s: number, p: any) => {
-    const val = p.preco_passagem ?? p.price ?? 0;
-    return s + (Number(val) || 0);
-  }, 0);
-
-  // 3. Multiplica o valor base pelo total de pessoas
-  const custoTotalPassagens = somaBasePassagens * totalPessoas;
-  this.totalPassagens = (custoTotalPassagens === 0) ? null : custoTotalPassagens;
-  
-  // --- FIM DA LÓGICA ATUALIZADA ---
-
-  // O orçamento total agora refletirá o novo cálculo das passagens
-  this.totalOrcamento = (this.totalHoteis || 0) + (this.totalPassagens || 0);
-  
-  // Restante da função
-  this.orcamentoAtual = null;
-  this.modalOrcamentosAberto = true;
-  this.detectorMudanca.detectChanges();
-}
-
-
-  onMetodoPagamentoChange(novoMetodo: string): void {
-    if (novoMetodo === 'credito') {
-      // Se for cartão de crédito, define o valor padrão de parcelas como 8.
-      this.numeroParcelas = 8;
-    } else {
-      // Para qualquer outra opção (Boleto, PIX, etc.), as parcelas são sempre 1.
-      this.numeroParcelas = 1;
-    }
-  }
-  onAprovarOrcamento(payload: any): void {
-    if (!this.destinoSelecionado) return;
-    const destino_id = this.destinoSelecionado.id;
-      this.metodoPagamento = payload.metodoPagamento;
-      this.numeroParcelas = payload.numeroParcelas;
-
-    const gerarOuEditar = (orcamento: any | null) => {
-      if (orcamento && orcamento.id) {
-        return this.destinoteService.editarOrcamento(orcamento.id, { status: 'Pagamento pendente' });
-      }
-      return this.destinoteService.gerarOrcamento(destino_id, 'Aceito');
-    };
-
-    this.destinoteService.aceitarDestino(destino_id).subscribe({
-      next: () => {
-        gerarOuEditar(this.orcamentoAtual).subscribe({
-          next: (orcamentoCriado) => {
-
-            const novaContaPagar ={
-              valor_total: this.totalOrcamento,
-              metodo_pagamento: this.metodoPagamento,
-              numero_parcelas: this.numeroParcelas,
-              orcamento_id: orcamentoCriado.orcamento.id
-            }
-            this.destinoteService.GerarContaPagar(novaContaPagar).subscribe({
-              next:(contaGerada)=>{
-                alert('Destino, orçamento e contas a pagar aceito')
-                this.modalOrcamentosAberto = false;
-                this.carregarDestinos();
-              },
-              error:(errConta)=>{
-                console.error('Erro ao gerar conta a pagar:', errConta);
-                alert('Orçamento aceito, mas falha ao gerar a conta a pagar.');
-              }
-            })
-          },
-          error: (err) => {
-            console.error('Erro ao criar/atualizar orçamento (aceitar):', err);
-            alert('Destino aceito, mas falha ao criar/atualizar orçamento');
-            this.modalOrcamentosAberto = false;
-            this.carregarDestinos();
-          }
-        });
-      },
-      error: (err) => {
-        console.error('Erro ao aceitar destino:', err);
-        alert('Erro ao aceitar destino');
-      }
-    });
-  }
-
-  onRecusarOrcamento(): void {
-    if (!this.destinoSelecionado) return;
-    const destinoId = this.destinoSelecionado.id;
-    const gerarOuEditar = (orcamento: any | null) => {
-      if (orcamento && orcamento.id) {
-        return this.destinoteService.editarOrcamento(orcamento.id, { status: 'Recusado' });
-      }
-      return this.destinoteService.gerarOrcamento(destinoId, 'Recusado');
-    };
-
-    this.destinoteService.recusarDestino(destinoId).subscribe({
-      next: () => {
-        gerarOuEditar(this.orcamentoAtual).subscribe({
-          next: (res) => {
-            alert('Destino e orçamento recusados com sucesso');
-            this.modalOrcamentosAberto = false;
-            this.carregarDestinos();
-          },
-          error: (err) => {
-            console.error('Erro ao criar/atualizar orçamento (recusar):', err);
-            alert('Destino recusado, mas falha ao criar/atualizar orçamento');
-            this.modalOrcamentosAberto = false;
-            this.carregarDestinos();
-          }
-        });
-      },
-      error: (err) => {
-        console.error('Erro ao recusar destino:', err);
-        alert('Erro ao recusar destino');
-      }
-    });
-  }
-
   fecharModalHoteis(): void {
     this.modalHoteisAberto = false;
   }
 
   fecharModalPassagens(): void {
     this.modalPassagensAberto = false;
+  }
+
+  fecharModalOrcamentos(): void {
+    this.modalOrcamentosAberto = false;
+    this.destinoSelecionado = null;
+  }
+
+  abrirModalOrcamentos(destino: any): void {
+    this.destinoSelecionado = destino;
+
+    const totalHoteis = (destino.hoteis || []).reduce((s: number, h: any) => s + (Number(h.hotel_price) || 0), 0);
+    this.totalHoteis = totalHoteis || null;
+
+    const numeroAdultos = Number(destino.adultos) || 0;
+    const numeroCriancas = Number(destino.criancas) || 0;
+    const totalPessoas = (numeroAdultos + numeroCriancas) > 0 ? (numeroAdultos + numeroCriancas) : 1;
+
+    const somaBasePassagens = (destino.passagens || []).reduce((s: number, p: any) => {
+      const val = p.preco_passagem ?? p.price ?? 0;
+      return s + (Number(val) || 0);
+    }, 0);
+
+    const custoTotalPassagens = somaBasePassagens * totalPessoas;
+    this.totalPassagens = (custoTotalPassagens === 0) ? null : custoTotalPassagens;
+    
+    this.totalOrcamento = (this.totalHoteis || 0) + (this.totalPassagens || 0);
+    
+    this.orcamentoAtual = null;
+    this.modalOrcamentosAberto = true;
+    this.detectorMudanca.detectChanges();
   }
 
 
@@ -255,24 +150,24 @@ carregarDestinos(): void {
             destino.hoteis = hoteis; 
             this.detectorMudanca.detectChanges();
           },
-            error: (err: any) => {
-              console.error(`Erro ao buscar hotéis do destino ${destino.id}:`, err);
-            }
+          error: err => {
+            console.error(`Erro ao buscar hotéis do destino ${destino.id}:`, err);
+          }
         });
         this.destinoteService.ListarPassagemsDestino(destino.id).subscribe({
           next: (passagens: any[]) => {
             destino.passagens = passagens;
             this.detectorMudanca.detectChanges();
-            },
-            error: (err: any) => {
-              console.error(`Erro ao buscar passagens do destino ${destino.id}:`, err);
-            }
+          },
+          error: err => {
+            console.error(`Erro ao buscar passagens do destino ${destino.id}:`, err);
+          }
         });
       });
 
       this.detectorMudanca.detectChanges();
     },
-    error: (error: any) => {
+    error: error => {
       console.log('erro ao buscar destinos', error);
     }
   });
@@ -336,6 +231,51 @@ carregarDestinos(): void {
     });
   }
 
+  buscarPassagens(id: any): void {
+    this.destinoteService.BuscarPassagem(id).subscribe({
+      next: (res: any) => {
+        console.log('Resposta completa da API (passagens):', res);
+
+        if (res && Array.isArray(res.airports)) {
+          const link = res.search_metadata?.google_flights_url || res.search_metadata?.json_endpoint || null;
+          this.passagens = res.airports.map((route: any) => {
+            const dep = route.departure && route.departure[0];
+            const arr = route.arrival && route.arrival[0];
+            return {
+              departureCity: dep?.city || dep?.airport?.name || null,
+              arrivalCity: arr?.city || arr?.airport?.name || null,
+              departureAirportId: dep?.airport?.id || null,
+              arrivalAirportId: arr?.airport?.id || null,
+              thumbnail: (arr && arr.thumbnail) || (dep && dep.thumbnail) || null,
+              image: (arr && arr.image) || (dep && dep.image) || null,
+              link: link,
+              raw: route
+            };
+          });
+        } else {
+          const items = res.ads || res.results || res.data || [];
+          this.passagens = items.map((p: any) => ({
+            name: p.name || p.title || p.airline || 'Passagem',
+            price: p.price || p.total_price || p.amount || null,
+            link: p.link || p.url || null,
+            thumbnail: p.thumbnail || null,
+            details: p.details || p.description || null,
+            raw: p
+          }));
+        }
+
+        this.carregandoPassagens = false;
+        this.detectorMudanca.detectChanges();
+      },
+      error: (err) => {
+        console.error('Erro ao buscar passagens:', err);
+        alert('Erro ao buscar passagens.');
+        this.carregandoPassagens = false;
+        this.detectorMudanca.detectChanges();
+      }
+    });
+  }
+
   salvarHoteis(hotel: any, destino: any):void {
     let precoLimpo: number = 0;
 
@@ -359,78 +299,148 @@ carregarDestinos(): void {
       next:(res)=>{
         alert('Hotel salvo com sucesso');
         console.log('Hotel salvo', res)
-        this.carregarDestinos()
       },
       error:(err)=>{
         console.error('Erro ao salvar hotel:', err);
         alert('Erro ao salvar hotel.');
 
-     }
-   });
- }
-buscarPassagens(id: any): void {
-    this.destinoteService.BuscarPassagem(id).subscribe({
-      next: (res: any) => {
-      console.log('Resposta completa da API (passagens):', res);
- // 1. Unificar todos os voos de 'best_flights' e 'other_flights'
-      const bestFlights = res.best_flights || [];
-      const otherFlights = res.other_flights || [];
-      const detailsLink = res.search_metadata?.google_flights_url || null;
-      this.passagens = [...bestFlights, ...otherFlights].map((voo: any) => {
- 
-      voo.link = voo.link || detailsLink;
- 
-        if (voo.flights && voo.flights.length > 0) {
-          const primeiroTrecho = voo.flights[0];
-          const ultimoTrecho = voo.flights[voo.flights.length - 1];
-          voo.departureCity = primeiroTrecho?.departure_airport?.name;
-          voo.arrivalCity = ultimoTrecho?.arrival_airport?.name;
-        }
-        return voo;
-       });
-       this.carregandoPassagens = false;
-       this.detectorMudanca.detectChanges();
+      }
+    });
+  }
+
+  salvarPassagem(voo: any, destino: any): void {
+    if (!voo || !voo.flights || voo.flights.length === 0) {
+      console.error('Objeto de voo inválido fornecido.', voo);
+      alert('Não foi possível salvar a passagem. Dados incompletos.');
+      return;
+    }
+
+    const primeiroTrecho = voo.flights[0];
+    const ultimoTrecho = voo.flights[voo.flights.length - 1];
+
+    const passagemSalva = {
+      aeroporto_saida: primeiroTrecho?.departure_airport?.name,
+      aeroporto_chegada: ultimoTrecho?.arrival_airport?.name,
+      duracao_voo: voo.total_duration,
+      aviao: primeiroTrecho?.airplane,
+      linha_aerea: primeiroTrecho?.airline,
+      preco_passagem: voo.price,      
+      destino_id: destino.id 
+    };
+
+    this.destinoteService.SalvarPassagem(passagemSalva).subscribe({
+      next: (res) => {
+        alert('Passagem salva com sucesso!');
+        console.log('Passagem salva:', res);
       },
       error: (err) => {
-        console.error('Erro ao buscar passagens:', err);
-        alert('Erro ao buscar passagens.');
-        this.carregandoPassagens = false;
-        this.detectorMudanca.detectChanges();
-      }});
- }
- salvarPassagem(voo: any, destino: any): void {
-  if (!voo || !voo.flights || voo.flights.length === 0) {
-        console.error('Objeto de voo inválido fornecido.', voo);
-        alert('Não foi possível salvar a passagem. Dados incompletos.');
-        return;
+        console.error('Erro ao salvar passagem:', err);
+        alert('Erro ao salvar passagem.');
       }
-      const primeiroTrecho = voo.flights[0];
-      const ultimoTrecho = voo.flights[voo.flights.length - 1];
-      const passagemSalva = {
-                aeroporto_saida: primeiroTrecho?.departure_airport?.name,
-                aeroporto_chegada: ultimoTrecho?.arrival_airport?.name,
-                aviao: primeiroTrecho?.airplane,
-                linha_aerea: primeiroTrecho?.airline,
-                preco_passagem: voo.price,
-                destino_id: destino.id 
-              };
-              this.destinoteService.SalvarPassagem(passagemSalva).subscribe({
-                next: (res) => {
-                  alert('Passagem salva com sucesso!');
-                  console.log('Passagem salva:', res);
-                  this.carregarDestinos()
-                },
-                error: (err) => {
-                  console.error('Erro ao salvar passagem:', err);
-                  alert('Erro ao salvar passagem.');
-                }
-              });
- }
-// Compatibilidade com o nome usado no template: delega para salvarPassagem
+    });
+  }
+
+  // Compatibilidade com o nome usado no template: delega para salvarPassagem
   salvarPassagens(voo: any, destino: any): void {
     this.salvarPassagem(voo, destino);
   }
-}
 
+ onAprovarOrcamento(payload: any): void { // ALTERAÇÃO: Trocado 'AprovacaoPayload' por 'any' para evitar erro de compilação
+    console.log('Payload recebido no evento "aprovado":', payload);
+
+    // Verificação de segurança para garantir que o payload tem a estrutura correta
+    if (!payload || typeof payload.metodoPagamento === 'undefined' || typeof payload.numeroParcelas === 'undefined') {
+      console.error('Payload inválido recebido. Ação de aprovação abortada.', payload);
+      alert('Ocorreu um erro inesperado ao processar a aprovação.');
+      return;
+    }
+
+    if (!this.destinoSelecionado) return;
+    const destinoId = this.destinoSelecionado.id;
+    
+    // 1ª Chamada: Aceitar o destino
+    this.destinoteService.aceitarDestino(destinoId).subscribe({
+      next: () => {
+        // 2ª Chamada: Gerar o orçamento
+        this.destinoteService.gerarOrcamento(destinoId).subscribe({
+          next: (respostaApi) => {
+            const orcamentoCriado = respostaApi.orcamento;
+            if (!orcamentoCriado || !orcamentoCriado.id) {
+              console.error('O ID do orçamento não foi retornado pela API.');
+              alert('Erro: Falha ao obter dados do orçamento criado.');
+              this.fecharModalOrcamentos();
+              return;
+            }
+
+            // Prepara os dados para a 3ª chamada
+            const novaContaPagar = {
+              valor_total: this.totalOrcamento,
+              metodo_pagamento: payload.metodoPagamento,
+              numero_parcelas: payload.numeroParcelas,
+              orcamento_id: orcamentoCriado.id
+            };
+
+            // 3ª Chamada: Gerar a conta a pagar
+            this.destinoteService.GerarContaPagar(novaContaPagar).subscribe({
+              next: () => {
+                alert('Orçamento aprovado e contas a pagar geradas com sucesso!');
+                this.fecharModalOrcamentos();
+                this.carregarDestinos();
+              },
+              error: (errConta) => {
+                console.error('Erro ao gerar conta a pagar:', errConta);
+                alert('Orçamento aprovado, mas falha ao gerar a conta a pagar.');
+                this.fecharModalOrcamentos();
+              }
+            });
+          },
+          error: (errOrcamento) => {
+            console.error('Erro ao gerar orçamento:', errOrcamento);
+            alert('Destino aceito, mas falha ao criar o orçamento.');
+            this.fecharModalOrcamentos();
+          }
+        });
+      },
+      error: (errDestino) => {
+        console.error('Erro ao aceitar destino:', errDestino);
+        alert('Ocorreu um erro ao aceitar o destino.');
+        this.fecharModalOrcamentos();
+      }
+    });
+  }
+
+onRecusarOrcamento(): void {
+    if (!this.destinoSelecionado) return;
+    const destinoId = this.destinoSelecionado.id;
+
+    // 1ª Chamada: Recusar o destino
+    this.destinoteService.recusarDestino(destinoId).subscribe({
+      next: () => {
+        // 2ª Chamada: Atualizar o status
+        this.destinoteService.recusarDestino('Recusado').subscribe({
+          next: () => {
+            alert('Destino recusado com sucesso.');
+            this.fecharModalOrcamentos();
+            this.carregarDestinos();
+          },
+          error: (err) => {
+            console.error('Erro ao atualizar status do destino para recusado:', err);
+            alert('Ocorreu um erro ao finalizar a recusa.');
+            this.fecharModalOrcamentos();
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Erro ao recusar destino:', err);
+        alert('Ocorreu um erro ao recusar o destino.');
+        this.fecharModalOrcamentos();
+      }
+    });
+  }
+  
+
+
+  
+}
 
 
